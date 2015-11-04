@@ -1,8 +1,11 @@
-*
-*[oa]
-
-!.gitignore
-!/extra
+/*
+!/extra/
 !/runscripts/
+!/llvm/
+/llvm/*
+!/llvm/src/
+/llvm/src/*
+!/llvm/src/lib
+/llvm/src/lib/*
 !/llvm/src/lib/CSE231
-
+!/report_one/

@@ -1,0 +1,69 @@
+Welcome:
+alloca 	1
+call 	1
+ret 	1
+store 	1
+TOTAL 	4
+
+
+Gcd:
+alloca 	7
+br 	6
+call 	4
+icmp 	3
+load 	10
+phi 	3
+ret 	4
+store 	7
+urem 	2
+TOTAL 	46
+
+Hadmard:
+add 	3199
+alloca 	18
+ashr 	8
+br 	3176
+call 	135
+getelementptr 	2306
+icmp 	1105
+load 	12834
+ret 	2
+sext 	256
+shl 	128
+store 	4055
+sub 	448
+trunc 	2056
+zext 	8155
+TOTAL 	37881
+
+
+Compression:
+add 	14606
+alloca 	473
+and 	3426
+ashr 	236
+bitcast 	322
+br 	28848
+call 	140
+getelementptr 	33683
+icmp 	14137
+load 	86542
+lshr 	749
+mul 	29
+or 	638
+phi 	827
+ptrtoint 	194
+ret 	42
+sdiv 	5
+select 	2
+sext 	2384
+shl 	4739
+store 	29640
+sub 	1780
+switch 	1
+trunc 	1241
+udiv 	3
+urem 	7
+xor 	814
+zext 	16367
+TOTAL 	241875

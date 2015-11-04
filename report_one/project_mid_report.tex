@@ -1,0 +1,322 @@
+\documentclass{acm_proc_article-sp}
+\usepackage{indentfirst}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{dsfont}
+\usepackage{cases}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{array}
+\usepackage{cleveref}
+\usepackage{subfigure}
+\usepackage{bm}
+\usepackage{cite}
+\usepackage{multirow}
+\usepackage{color} 
+\usepackage{url}
+\usepackage{listings}
+\lstset{language=C++, 
+        basicstyle=\ttfamily\small, 
+        %keywordstyle=\color{keywords},
+        %commentstyle=\color{blue},
+        stringstyle=\color{red},
+        showstringspaces=false}
+%\usepackage{hyperref}
+\newcommand{\reffig}[1]{Figure \ref{#1}}
+\newcommand{\reftable}[1]{Table \ref{#1}}
+\newcommand{\refalg}[1]{Algorithm \ref{#1}}
+\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+\newcommand{\crefrangeconjunction}{--}
+\newtheorem{definition}{\bf Definition}[section]
+\newtheorem{theorem}{\bf Theorem}[section]
+\newtheorem{lemma}{\bf Lemma}[theorem]
+
+%\newtheorem{proposition}[theorem]{Proposition}
+%\newtheorem{corollary}[theorem]{Corollary}
+
+\usepackage{paralist}
+\let\itemize\compactitem
+\let\enditemize\endcompactitem
+\let\enumerate\compactenum
+\let\endenumerate\endcompactenum
+\let\description\compactdesc
+\let\enddescription\endcompactdesc
+
+%\newenvironment{proof}[1][Proof]{\begin{trivlist}
+%\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+%\newenvironment{definition}[1][Definition]{\begin{trivlist}
+%\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+%\newenvironment{example}[1][Example]{\begin{trivlist}
+%\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+%\newenvironment{remark}[1][Remark]{\begin{trivlist}
+%\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+%\newcommand{\qed}{\nobreak \ifvmode \relax \else
+%      \ifdim\lastskip<1.5em \hskip-\lastskip
+%      \hskip1.5em plus0em minus0.5em \fi \nobreak
+%      \vrule height0.75em width0.5em depth0.25em\fi}
+\makeatletter
+\def\@copyrightspace{\relax}
+\makeatother
+
+\begin{document}
+
+\title{CSE 231 Project Mid-point Report}
+
+\numberofauthors{1}
+\author{
+\alignauthor
+{\Large \bf Qingyu Zhou\footnotemark[1],~ Mengting Wan\footnotemark[2], ~ Peixin Li\footnotemark[3]}\\
+\vspace{0.1in}
+Computer Science and Engineering Department \\
+University of California, San Deigo \\
+\vspace{0.1in}
+\email{\sf \footnotemark[1]~qyzhou@ucsd.edu, \footnotemark[2]~m5wan@ucsd.edu, \footnotemark[3]~pel052@eng.ucsd.edu}
+}
+
+
+\maketitle
+% \begin{abstract}
+
+% \end{abstract}
+
+% A category with the (minimum) three required fields
+%\category{H.4}{Information Systems Applications}{Miscellaneous}
+%A category including the fourth, optional field follows...
+%\category{D.2.8}{Software Engineering}{Metrics}[complexity measures, performance measures]
+
+%\terms{}
+
+%\keywords{}
+
+\section{Introduction}
+In this project, we will use LLVM to implement program analyses. This report will provide a summary of Part 1 of this project. Specifically, we will achieve counting instructions statically and dynamically, and profiling branch bias for each function. We will conduct experiments on all the benchmarks and provide results in the {\tt /output\_log} directory. We will introduce the algorithms for these three tasks in subsequent sections.
+
+\section{Static Instruction Counts}
+
+\subsection{Requirement}
+In this section, we'll write a pass that counts the number of static instructions in a program. We should output the total number of instructions, as well as a per-instruction count.
+
+\subsection{Analysis}
+In order to print out the number of the instructions, there are two things we should do in our {\tt CountStaticInstructions} Pass. First, we will use a STL's {\tt std::map} to store the instructions with their numbers. To get the opcode for an Instruction, we can use {\tt Instruction::getOpcode()}.  Second, we need to print the result override the virtual method print provided by the Pass class, and run {\tt opt} with the {\tt -analyze} flag.
+
+\subsection{Implementation}
+Our {\tt CountStaticInstructions} Pass is implemented by inheriting from on subclass Module Pass. In this Pass, we construct a map to associate instructions with their counts. 
+
+Firstly, we go through all the instructions. If we can find the instruction in the map, then the count number of this instruction add 1. In another case, we will insert the instruction to the map and initialized its count number 1.
+
+Secondly, we print all the {\tt < key, value>} pairs in the map we have constructed. Each time we print an instruction and its number, we add the numbers to the total number. 
+
+
+\section{Dynamic Instruction Counts}
+
+\subsection{Requirement}
+
+``We need to write a dynamic analysis that executes the program and collects runtime information. In particular, we will write a pass that instruments the original program by inserting code to count the number times each instruction executes.''\footnote{\small https://cseweb.ucsd.edu/classes/fa15/cse231-a/part1.html}
+
+\subsection{Analysis}
+The dynamic analysis, which is different from the static one, needs linking an external helper function to the pass. To meeting this specific counting requirement, there are two points that we should be careful with: 1) Where should we insert our helper function in the pass? and 2) How to count the instruments without adding additional counts from our helper function?
+
+Also, there are some other perspectives we should pay attention: 1) How to implement the pass at the highest efficiency? 2) How to transfer parameters and store data? 3) How to output our result in a clear way? (Avoid mangling with program output) 4) How to get the mangled function name? We will explore the answers to these questions in the following parts.
+
+\subsection{Implementation}
+At the beginning, the very first problem of implementation is that we should design the helper function first or design the pass first. This question may be controversial, but we decide to start from the helper. There are several reasons. 
+First, helper function is much easier than pass. Because it is separate from LLVM system. Hence, the helper function is a simple standard C++ project that we can make sure it will function correctly. 
+
+In addition, without considering the LLVM, we can focus on how to store the data and how to display the final answer.
+
+Third, we will need the helper function mangled name when we handle the pass. So it seems starting from helper is a better choice.
+
+\subsubsection{Write the helper function}
+We divide this step to two parts: 1) decide data structure; and 2) find adequate parameters.\vspace{0.1in}\\
+\textbf{1) Data structure}. \\
+Data structure, used to store {\tt opNames} and corresponding appearing number, is a map, i.e. {\tt <key, value>= <opName, count>}. 
+We set it as a global variable as {\tt CountMap} here.\vspace{0.1in}\\
+\textbf{2) Functions in helper}. 
+\begin{itemize}
+\item[a)] {\tt Count(char *opName, int count)}\\
+The Count function receives two parameters.  One is the {\tt opName} and the other is count number.
+
+It is not intuitive that why we need the second parameter. The answer to this question is that, actually, we do not need it. We can remove this parameter and insert this function after each instrument in benchmark files. 
+However, the very reason we want to use this count parameter is from the efficiency consideration.
+
+Taking a glimpse at the hint part in project requirement document, it says, 
+``A basic block is a single-entry, single-exit section of code. For this reason, you are guaranteed that if execution enters a basic block, all instructions in the basic block will be executed in a straight line. You can use this to your advantage to avoid instrumenting every instruction individually.''\footnote{\small https://cseweb.ucsd.edu/classes/fa15/cse231-a/part1.html}
+
+In another word, we can call this function after each block instead of each instrument. Thinking about how much runtime we can save by using this strategy.
+
+Any wise reader will doubt, since using block is more efficient, why we are not using function or module as our function parameter.
+
+Theoretically, it is correct. However, we will need to keep a more complicate tracking count in the pass. Also, in fact, in your pass, you will still need to count based on blocks.
+
+It is true that the efficiency will definitely increase. But if you balance the potential difficulty to implement this, you can conclude that calling count after each block is the best way.
+
+In general, we have finished the discussion of data structure and parameters of this function and explain why we choose input parameter {\tt int count} based on each block. 
+
+\item[b)] {\tt printDI() }\\
+{\tt printDI()} receives no parameter. It is a function to print final result. 
+
+Inside it, it traverses over our data structure, {\tt CountMap}.
+
+We use {\tt C++ std::cerr} output stream here to avoid massy C fprintf function which needs to redirect to err. Also, in this way, we can distinguish the normal std::cout from our output, which is standard output.
+\end{itemize}
+
+\subsubsection{Get mangled function name}
+The easiest way to get mangled name is by reconstructing the bc code. We use clang to get bc.\\
+{\tt \small clang -O0 -emit-llvm -c dynamic\_helper.cpp -o dynamic\_helper\_out.bc}\\
+Then, we use {\tt llc} to reconstruct.\\
+{\tt \small llc -march=cpp dynamic\_helper\_out.bc}\\
+We can find a {\tt dynamic\_helper\_out.cpp} file generated in our directory.
+A simple search will get what we want. Two functions names are\\
+{\tt \small \_Z5CountPci}\\
+{\tt \small \_Z7printDIv}\\
+Write them down, we will use them later.
+
+\subsubsection{Construct pass}
+We are now going to work on the {\tt CountDynamicInstructions} pass. We will use {\tt IRBuilder} to insert and call our helper functions in external file. 
+To build a {\tt IRBuilder} and insert function, we need know two things.
+\begin{itemize}
+\vspace{-0.1in}
+\item How to link the functions in external file 
+\item Where to insert the function
+\end{itemize}
+According to LLVM's Document, we can generalize that we need to follow these steps:
+\begin{itemize}
+\vspace{-0.1in}
+\small
+\item[I.] Set the function parameters type 
+\item[II.] Create function according to its name
+\item[III.] Find your insert point
+\item[IV.] Mark this point to IRBuilder 
+\item[V.] Call the Function
+\vspace{-0.1in}
+\end{itemize}
+
+\textbf{Step I:  Set the function parameters type} \\
+This step is easy since we have already determined the parameters in our helper function.
+Creating a vector to store the parameters and push key-value into it. Like this:\\
+{\tt std::vector <Type*> argsForCount;\\
+ argsForCount.push\_back(Type::getInt8PtrTy(M.getContext()));}
+ \vspace{0.05in}\\
+\textbf{Step II : Create function according to its name} \\
+Create the function. Following the API, you will not miss it. For example, for {\tt Count()} function, we have this (notice that we use mangled function name here):
+\vspace{-0.02in}
+\lstinputlisting{code1.txt}
+
+\textbf{Step III. Find your insert point}\\
+We write a nested loop to traverse through the program. 
+From {\tt module -> function -> block -> instrument}. This is easy because we only need to get the iterator of each level and traverse until the iterator meets its end.
+\begin{itemize}
+\vspace{-0.05in}
+\item[a)] The insert point for {\tt Count()}:\\
+This insert point is at end of each basic block. We can insert and call {\tt Count()} at the end of each loop while we keep tracking all the instrument in this block.
+
+We create a map {\tt InstCountMap} at the beginning of each loop on block.
+
+Then we call the function {\tt Count()} at the end of block.
+
+\item[b)] The insert point for {\tt PrintDI()}:\\
+This point is at the end of main block. This is a little bit tricky because we want to print this at the end of the {\tt main()} function.
+
+Hence, we use if statement to find this main function according to the module name.
+
+{\tt If ((*M\_iterator).getName() =="main")}
+
+Once this is true, we insert the {\tt PrintDI()} at the end of the last instrument of the last block in main.
+\vspace{-0.05in}
+\end{itemize}
+\textbf{Step IV. Mark this point to IRBuilder}\\
+Use {\tt builder.SetInsertPoint()} to insert point to IRBuilder. We should keep in mind that we need to move the pointer a step back from the ending in order to insert.
+ \vspace{0.05in}\\
+\textbf{Step V. Call the Function}\\
+Use {\tt CreateCall()} to call the function with parameters.
+
+\subsubsection{Link the helper function to run our test}
+Now, we have finished all coding work. We recompile the LLVM to integrate our new pass to CSE231.so. Now, we are going to test the benchmarks. Use the following command to run.
+\vspace{-0.02in}
+\lstinputlisting{code2.txt}
+%Now, check the result on {\tt gcd} benchmark.
+%\lstinputlisting{result1.txt}
+%The other results are in the attachment.
+
+\section{Profiling Branch Bias}
+\subsection{Requirement}
+In this section, we are required to write a pass which can count the number of times branch instructions are taken or not and compute the taken ratio. We need to output the function name, bias ratio, the number of times the branch is taken and the number of total times on this branch.
+
+\subsection{Analysis}
+In this part, we will inherit some ideas and terms from previous sections. Particularly, we use similar methods to get mangled function names and link helper functions to run tests on benchmarks.
+
+We use three external helper functions to support our {\tt BranchBias} pass: 1) a function to track the number of total times of a branch; 2) a function to track the number of taken times of a branch; and 3) a function to print out results. In our {\tt BranchBias} pass, we recursively find branches, insert helper functions and check if they are taken.
+
+\subsection{Implementation}
+
+Similarly, we will first introduce how we write the helper functions, get mangled function names and then introduce how we construct the {\tt BranchBias} pass.
+
+\subsubsection{Write the helper functions}
+We have three functions in this sections: 1) {\tt BranchTotal(char* function)} to track total times; {\tt BranchTaken(char* function)} to track taken times; and {\tt PrintStats()} to print out statistics.
+
+For {\tt BranchTotal(char* function)} and {\tt BranchTaken(char* function)}, we use two maps to record the function names and counts of total/taken times, i.e. {\tt<key, value> = <functionName, total/taken counts>}. For {\tt PrintStats()}, if we cannot find any branches, we will print out {\tt NA, NA, 0, 0}; otherwise, we will print out corresponding statistics and we use {\tt fprintf} to keep 2 digits after zero for the bias value here.
+
+\subsubsection{Get mangled function names}
+Similar to {\tt  CountDynamicInstructions pass}, we can obtain mangled function names as follows:\\
+{\tt \small \_Z11BranchTotalPc}\\
+{\tt \small\_Z11BranchTakenPc}\\
+{\tt \small\_Z10PrintStatsv}
+
+\subsubsection{Construct pass}
+Similarly, we use {\tt IRBuilder} to insert and call our helper functions. We iterate over each module, each function, each basic block and each instruction. We first check if the instruction is conditional. If so, we proceed and insert calls \\
+{\tt \small builder.CreateCall (BranchTaken, f\_name\_str);}\\
+{\tt \small builder.CreateCall (BranchTotal, f\_name\_str);}.
+
+Notice that we will insert global constant C strings to record function names by\\
+{\tt \small f\_name\_str = builder.CreateGlobalStringPtr(f\_name, `f\_name\_str');}.
+
+Notice that LLVM instructions are stored in Static Single Assignment (SSA) form, where any variable can be assigned to only once. Thus when tracking instructions and a variable can be assigned a different value based on the path of control flow, we probably will reach the PHI node \footnote{\small http://www.llvmpy.org/llvmpy-doc/dev/doc/llvm\_concepts.html}. Therefore in our {\tt BranchBias} pass, we need to particularly fix the incoming block for these PHI nodes.
+\vspace{-0.02in}
+\lstinputlisting{code3.txt}
+When we reach {\tt return}, we insert the call for {\tt PrintStats()} to print statistics by\\
+{\tt \small builder.CreateCall (PrintStats, `')}.
+
+\section{Benchmark example analysis}
+We can conduct a simple analysis on the {\tt gcd} benchmark. The code of {\tt gcd.cpp} is showed as below.
+\lstinputlisting{gcd.cpp}
+Based on the dynamic instruction count result, we have 7 {\tt alloca}, 6 {\tt br}, 4 {\tt call}, 3 {\tt icmp}, 10 {\tt load}, 3 {\tt phi}, 4 {\tt ret}, 7 {\tt store} and 2 {\tt urem}. To run {\tt gcd(72, 32)}, we first check if {\tt 32==0} and returns {\tt false}, which indicates this branch is not taken. Then we run {\tt gcd(32, 72\%32)} ({\tt gcd(32, 8)}) and check if {\tt 8==0} and returns {\tt false}. Thus this branch is not taken again. Then we run {\tt gcd(8, 32\%8)} ({\tt gcd(8, 0)}) and check if {\tt 0==0} and returns {\tt true}. Thus this branch is taken and the program terminates. Therefore, the bais for this function is $1/3$, which is exactly the result from our {\tt BranchBias} pass ($0.33$).
+
+\section{Conclusion}
+In Part 1 of this project, we apply LLVM to analyze programs and finished three tasks on several benchmarks: 1) collecting static instruction counts; 2) collecting dynamic instruction counts; and 3) profiling branch bias. We also look at the {\tt gcd} benchmark in detail and find that our result is reasonable.
+
+
+%\appendix
+%\section{Results for Dynamic Instrument Counting}
+%\lstinputlisting{result2.txt}
+
+
+
+
+
+
+
+
+
+
+
+%\newpage
+%\bibliographystyle{abbrv}
+%\footnotesize
+%\bibliography{}  % sigproc.bib is the name of the Bibliography in this case
+% You must have a proper ".bib" file
+%  and remember to run:
+% latex bibtex latex latex
+% to resolve all references
+%
+% ACM needs 'a single self-contained file'!
+%
+%APPENDICES are optional
+%\balancecolumns
+%\appendix
+%Appendix A
+
+\balancecolumns
+
+\end{document}

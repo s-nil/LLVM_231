@@ -1,0 +1,8 @@
+//make the function type
+FunctionType * functiontype = FunctionType::get (
+        Type::getVoidTy(M.getContext()) ,
+        argsForCount,
+        false
+        );
+Function * Count = Function::Create(functiontype,
+      Function::ExternalLinkage,"_Z5CountPci",&M);

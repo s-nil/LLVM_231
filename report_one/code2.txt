@@ -1,0 +1,16 @@
+//bench.bc is going to be tested, 
+//load with pass to bench.new.bc
+opt -load $LLVMLIB/CSE231.so -$pass < $bench.bc > 
+          $bench.out.bc
+
+//link the benchmark
+llvm-link $BENCHMARKS/$bench/$bench.out.bc 
+          $HELP_PATH/$help_module.bc 
+          -o $bench.linked.bc
+
+//get executable file, denote as exe
+llc -filetype=obj $bench.linked.bc -o=$bench.o
+g++ $bench.o -o $bench.exe
+
+//redirect std::err to the log we want
+./$bench.exe 2> $OUTPUTLOGS/$bench.dynamic.log

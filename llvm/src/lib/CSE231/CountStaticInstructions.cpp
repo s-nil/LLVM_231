@@ -50,7 +50,7 @@ namespace {
 
         total_num += mit->second;
      } 
-      Output << "TOTAL: " << total_num << "\n";
+      Output << "TOTAL:   " << total_num << "\n";
     }
 
   };

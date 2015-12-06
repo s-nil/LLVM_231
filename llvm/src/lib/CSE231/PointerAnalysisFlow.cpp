@@ -70,6 +70,46 @@ string PointerAnalysisFlow::jsonString() {
 	return ss.str();
 }
 
+
+string PointerAnalysisFlow::arrowList() {
+	if (value.size()==0)
+		return "\"" + basic + "\"";
+	//Value has something inside
+	stringstream ss;
+	//ss<<"in arrowList";
+	map<string, set<string> >::const_iterator it = this->value.begin();
+    string first = it->first;
+	set<string>::iterator its=it->second.begin();
+	if (its != it->second.end()) {
+        ss << first << "->"<< *its << "\n";
+        its++;
+	}
+	for (; its != it->second.end() ; its++) {
+        ss << first << "->"<< *its << "\n";
+	}
+	//errs() << "number of keys in set : " << it->second.size() << "\n";
+ 	if (it != this->value.end())
+ 		it++;
+	for (; it != this->value.end() ; it++) {
+		if (it->second.size()==0)
+			continue;
+        string first = it->first;
+		its=it->second.begin();
+		if (its != it->second.end()) {
+            ss << first << "->"<< *its << "\n";
+			its++;
+		}
+		for (; its != it->second.end() ; its++) {
+            ss << first << "->"<< *its << "\n";
+		}
+	}
+	ss << "";
+	//ss<<"out arrowList";
+	return ss.str();
+}
+
+
+
 void PointerAnalysisFlow::copy(Flow* rhs) {
 	PointerAnalysisFlow* f = static_cast<PointerAnalysisFlow*>(rhs);
 	this->basic = f->basic;

@@ -136,6 +136,10 @@ void StaticAnalysis::buildCFG(Function &F){
    	}
 }
 
+void StaticAnalysis::print(raw_ostream &OS) {
+    //do some badthing os outputsteam
+	OS<<"oops in abstract class print"<<"\n";
+}
 //Prints out the graph data using BFS and avoiding cycles.
 //Doesn't quite print out JSON yet, but some nice string representation.
 void StaticAnalysis::JSONCFG(raw_ostream &OS) {

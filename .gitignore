@@ -11,3 +11,5 @@
 !/report_one/
 !/P2test/
 *.swp
+!/drawGraph
+*~

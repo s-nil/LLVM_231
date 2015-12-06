@@ -227,6 +227,47 @@ bool PointerAnalysis::madeByLLVM(string name) {
 	}
 }
 
+
+void PointerAnalysis::print(raw_ostream &OS) {
+    //The graph data representationion is now edge-based.
+    for (unsigned int i = 0; i < CFGNodes.size() ; i++) {
+        this->JSONNode(OS,this->CFGNodes[i]);
+        if(i+1 < CFGNodes.size()) {
+            OS << "\n";
+        }
+            OS << "\n";
+    }
+}
+
+void PointerAnalysis::JSONEdge(raw_ostream &OS, ListEdge* edge) {
+	PointerAnalysisFlow * temp = (PointerAnalysisFlow * )edge->flow;
+    OS << temp->arrowList() << "\n";
+
+}
+
+void PointerAnalysis::JSONNode(raw_ostream &OS, ListNode* node) {
+    
+	OS << "representation : " << *(node->inst) << "\n";
+	OS << "#Edge incoming" << "\n";
+    for (unsigned int i = 0 ; i < node->incoming.size() ; i++) {
+        this->JSONEdge(OS,node->incoming[i]);
+        if (i+1<node->incoming.size())
+            OS << "\n";
+
+    }
+	OS << "\n";
+	
+ 	OS << "#Edge outcoming" << "\n";
+    for (unsigned int i = 0 ; i < node->outgoing.size() ; i++) {
+        this->JSONEdge(OS,node->outgoing[i]);
+        if (i+1<node->outgoing.size())
+            OS << "\n";
+
+    }
+
+
+}
+
 Flow* PointerAnalysis::initialize(){
 	return new PointerAnalysisFlow(PointerAnalysisFlow::BOTTOM);
 }

@@ -14,6 +14,7 @@ entry:
   store float 3.000000e+00, float* %b, align 4
   store float* %a, float** %c, align 8
   store float* %b, float** %c, align 8
+  store float* null, float** %c, align 8
   ret i32 0
 }
 

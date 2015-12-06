@@ -64,6 +64,7 @@ public :
 
 	//This string should only be used to represent TOP or BOTTOM.
 	string basic;
+    //virtual string arrowList();
 
 };
 

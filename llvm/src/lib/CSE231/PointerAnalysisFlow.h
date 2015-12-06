@@ -39,6 +39,8 @@ public:
 	 */
 	string jsonString();
 
+    string arrowList();
+
 	/*
 	 * The equality operator must also be overloaded when we want to assign a variable to top or bottom (or something else).
 	 */

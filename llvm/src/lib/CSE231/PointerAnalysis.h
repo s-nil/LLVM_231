@@ -45,6 +45,11 @@ public :
 
 	Flow* initialize();
 
+    void print(raw_ostream &OS);
+    void JSONNode(raw_ostream &OS, ListNode* node);
+    void JSONEdge(raw_ostream &OS, ListEdge* edge);
+    
+
 protected:
 	PointerAnalysisFlow* execute_X_equals_refY(PointerAnalysisFlow* in, Instruction* inst);
 	PointerAnalysisFlow* execute_X_equals_Y(PointerAnalysisFlow* in, Instruction* inst);

@@ -59,6 +59,7 @@ public :
 	void runWorklist();
 	ListNode* getCFG();
 	StringRef getFunctionName();
+    virtual void print(raw_ostream &OS);
 	void JSONCFG(raw_ostream &OS); //Returns the context graph in JSON format.
 	StaticAnalysis(Function &F);
 	StaticAnalysis(); //To be called by subclasses

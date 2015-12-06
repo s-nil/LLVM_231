@@ -8,7 +8,7 @@ bench_path=$1
 bench=` echo $bench_path | awk -F "/" '{print $NF}'`
 
 cd $bench_path
-clang -O0 -emit-llvm -c $bench_path/$bench/$bench.cpp -o $bench_path/$bench/$bench.bc
+clang -O0 -emit-llvm -c $bench_path/$bench.cpp -o $bench_path/$bench.bc
 
 llvm-dis $bench_path/$bench.bc
 

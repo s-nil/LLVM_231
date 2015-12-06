@@ -9,3 +9,5 @@
 /llvm/src/lib/*
 !/llvm/src/lib/CSE231
 !/report_one/
+!/P2test/
+*.swp

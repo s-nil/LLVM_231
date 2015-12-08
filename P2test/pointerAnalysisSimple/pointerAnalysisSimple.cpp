@@ -11,8 +11,8 @@ int main() {
 
 	//testing X = &Y
 	c = &b; // c -> a,b
-	c = NULL;
-/*
+	
+
 	float d = 0.5f;
 	float* e = &d; // c -> a,b ; e -> d
 	float* f;
@@ -45,6 +45,6 @@ int main() {
 		if (k==9)
 			j = &f;
 	}
-*/
+
 	return 0;
 }

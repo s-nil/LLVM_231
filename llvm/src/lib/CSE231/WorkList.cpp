@@ -1,5 +1,5 @@
 //
-//  StaticAnalysisPass.cpp
+//  WorkListPass.cpp
 //  
 //
 //  Created by Jules Testard on 22/05/2014.
@@ -10,17 +10,15 @@
  * Note : use the errs() instead of std::cout in this file to output to the console (if your name is not mike and you don't have a fancy debugger that
  * took hours to install :).
  */
-#include "StaticAnalysis.h"
+#include "WorkList.h"
 
-ListNode* StaticAnalysis::getCFG(){
-	return this->contextFlowGraph;
-}
+
 
 /**
  * The run worklist is not much more than a classic BFS.
  * Notice that it processes one instruction at a time. Processing multiple instructions at a time will be much harder.
  */
-void StaticAnalysis::runWorklist() {
+void WorkList::runWorklist() {
 	//We are using a queue for the worklist, but it could be any type of structure, really.
 	queue<ListNode*> worklist;
 
@@ -78,7 +76,7 @@ void StaticAnalysis::runWorklist() {
 
 
 
-void StaticAnalysis::CFGmaker(Function &F){
+void WorkList::CFGmaker(Function &F){
     //DFS clone graph without recursion! yes
     //algorithm is at http://bangbingsyb.blogspot.com/2014/11/leetcode-clone-graph.html
     map<Instruction *, ListNode *> map;
@@ -91,7 +89,7 @@ void StaticAnalysis::CFGmaker(Function &F){
     Instruction * instruction = &*(BI); 
     ListNode * first = new ListNode(index++);
     first->inst = instruction;
-    this->contextFlowGraph = first;
+    this->root = first;
     this->CFGNodes.push_back(first);
     map[instruction] =  first;
     s.push(instruction);
@@ -161,7 +159,7 @@ void StaticAnalysis::CFGmaker(Function &F){
 	*/
 }
 /*
-void StaticAnalysis::buildCFG(Function &F){
+void WorkList::buildCFG(Function &F){
 	Function::iterator BB = F.begin();
 	BasicBlock::iterator BI = BB->begin();
 	map<Instruction*,ListNode*> helper;
@@ -180,7 +178,7 @@ void StaticAnalysis::buildCFG(Function &F){
    	}
 
    	//Make the root point to the first instruction
-   	this->contextFlowGraph = CFGNodes[0];
+   	this->root = CFGNodes[0];
    	//Create incoming edge for the first node (does not exist otherwise.
    	ListEdge* firstEdge = new ListEdge(CFGNodes[0],CFGNodes[0]);
    	CFGNodes[0]->incoming.push_back(firstEdge);
@@ -222,82 +220,35 @@ void StaticAnalysis::buildCFG(Function &F){
 }
 
 */
-void StaticAnalysis::print(raw_ostream &OS) {
+void WorkList::print(raw_ostream &OS) {
     //do some badthing os outputsteam
 	OS<<"oops in abstract class print"<<"\n";
 }
-//Prints out the graph data using BFS and avoiding cycles.
-//Doesn't quite print out JSON yet, but some nice string representation.
-void StaticAnalysis::JSONCFG(raw_ostream &OS) {
-	//The graph data representation is now edge-based.
-	OS << "\"Analysis\" : [\n";
-	for (unsigned int i = 0; i < CFGNodes.size() ; i++) {
-		StaticAnalysis::JSONNode(OS,CFGNodes[i]);
-		if(i+1 < CFGNodes.size())
-			OS << ",\n";
-	}
-	OS << "\n]\n";
-}
 
-Flow* StaticAnalysis::initialize(){
+Flow* WorkList::initialize(){
 	return new Flow(BOTTOM);
 }
 
-void StaticAnalysis::JSONEdge(raw_ostream &OS, ListEdge* edge) {
-	OS << "{\"Edge\" : " << "[" << edge->src->index << "," << edge->dst->index << "],";
-	//OS << "\"Flow\" : " << edge->flow->jsonString() << "}";
-}
 
-void StaticAnalysis::JSONNode(raw_ostream &OS, ListNode* node) {
-	OS << "\t\"" << node->index << "\" : {\n\t\t";
-	OS << "\"representation\" : \"" << *(node->inst) << "\",\n\t\t";
-	OS << "\"incoming\" : [\n";
-	for (unsigned int i = 0 ; i < node->incoming.size() ; i++) {
-		OS << "\t\t\t";
-		StaticAnalysis::JSONEdge(OS,node->incoming[i]);
-		if (i+1<node->incoming.size())
-			OS << ",\n";
-	}
-	OS << "\n\t\t],\n";
-	OS << "\t\t\"outgoing\" : [\n";
-	for (unsigned int i = 0 ; i < node->outgoing.size() ; i++) {
-		OS << "\t\t\t";
-		StaticAnalysis::JSONEdge(OS,node->outgoing[i]);
-		if (i+1<node->outgoing.size())
-			OS << ",\n";
-	}
-	OS << "\n\t\t]\n";
-	OS << "\t}";
-}
-
-StringRef StaticAnalysis::getFunctionName(){
-	return this->functionName;
-}
-
-/**
- * For basic static analysis, flow is just "assigned to top", which just means the basic string from the Flow general class will be top.
- * This method is expected to do much more when overloaded.
- */
-Flow* StaticAnalysis::executeFlowFunction(Flow* in, Instruction *inst, int NodeId)
+Flow* WorkList::executeFlowFunction(Flow* in, Instruction *inst, int NodeId)
 {
-//	switch(instruction) {
-//	case:
-//
-//	}
+
 	return new Flow(TOP);
 }
 
-StaticAnalysis::StaticAnalysis(Function &F){
-	top = new Flow(TOP);//Should be changed by subclasses of Flow to an instance of the subclass
-	bottom = new Flow(BOTTOM);//Should be changed by subclasses of Flow to an instance of the subclass
+WorkList::WorkList(Function &F){
+	//top = new Flow(TOP);//Should be changed by subclasses of Flow to an instance of the subclass
+	//bottom = new Flow(BOTTOM);//Should be changed by subclasses of Flow to an instance of the subclass
 	this->functionName = F.getName();
 	CFGmaker(F);
+
 }
 
-StaticAnalysis::StaticAnalysis() {}
+WorkList::WorkList() {}
 
-StaticAnalysis::~StaticAnalysis(){
-	delete this->contextFlowGraph;
+WorkList::~WorkList(){
+	/*
+	delete this->root;
 	//Might need to put something else here
 	for (unsigned int i = 0 ; i < CFGNodes.size() ; i++) {
 		delete CFGNodes[i];
@@ -307,4 +258,5 @@ StaticAnalysis::~StaticAnalysis(){
 	}
 	delete top;
 	delete bottom;
+	*/
 }

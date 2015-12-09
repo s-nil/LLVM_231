@@ -1,7 +1,7 @@
 /*
  *
  * Requirements :
- * 	-	Every static analysis must extend the StaticAnalysis class.
+ * 	-	Every static analysis must extend the WorkList class.
  * 	-	The listNode structure is used to store the results of the analysis.
  *
  * 	Notice that we assume all static analyses use a function scope, in accordance with the Professor's instructions.
@@ -15,7 +15,7 @@
 #include "llvm/IR/Constants.h"
 #include "llvm/Support/raw_ostream.h"
 #include "PointerAnalysisFlow.h"
-#include "StaticAnalysis.h"
+#include "WorkList.h"
 #include <map>
 #include <vector>
 #include <cstdlib>
@@ -27,7 +27,7 @@ using namespace llvm;
 using namespace std;
 
 //Static Analysis class
-class PointerAnalysis : public StaticAnalysis {
+class PointerAnalysis : public WorkList {
 
 public :
 

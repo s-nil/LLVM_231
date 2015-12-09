@@ -1,6 +1,6 @@
 
 //
-//  StaticAnalysisPass.cpp
+//  WorkListPass.cpp
 //  
 //
 //  Created by Jules Testard on 22/05/2014.
@@ -273,8 +273,8 @@ Flow* PointerAnalysis::initialize(){
 }
 
 PointerAnalysis::PointerAnalysis(Function &F){
-	this->top = new PointerAnalysisFlow(TOP);//Should be changed by subclasses of Flow to an instance of the subclass
-	this->bottom = new PointerAnalysisFlow(BOTTOM);//Should be changed by subclasses of Flow to an instance of the subclass
+	//this->top = new PointerAnalysisFlow(TOP);//Should be changed by subclasses of Flow to an instance of the subclass
+	//this->bottom = new PointerAnalysisFlow(BOTTOM);//Should be changed by subclasses of Flow to an instance of the subclass
 	this->functionName = F.getName();
     CFGmaker(F);
 }

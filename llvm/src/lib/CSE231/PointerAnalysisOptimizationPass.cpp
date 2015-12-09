@@ -43,7 +43,7 @@ namespace {
     	for (unsigned int i = 0 ; i < pointerAnalyses.size() ; i++){
     		//Function name
             
-    		OS << "\"Function Name\" : \"" << pointerAnalyses[i]->getFunctionName() << "\n";
+    		OS << "\"Function Name\" : \"" << pointerAnalyses[i]->functionName << "\n";
             //OS << "\"Function Name\" "<<"\n";
         	//Run worklist algorithm
         	pointerAnalyses[i]->runWorklist();

@@ -7,8 +7,11 @@
 
 #ifndef FLOW_H_
 #define FLOW_H_
-#include <string>
+
+
 #include "llvm/Support/raw_ostream.h"
+#include <string>
+
 
 using namespace std;
 using namespace llvm;
@@ -20,28 +23,54 @@ using namespace llvm;
  *
  * This class is the closest we can get to a lattice definition.
  */
+ 
+/*
+class LatticeBase {
+public:
+     static const std::string TOP;
+     static const  std::string BOTTOM;
+
+    string value;
+
+    LatticeBase() {
+        this->value = "";
+    }
+    LatticeBase(std::string input) {
+        this->value = input; 
+
+    } 
+    //valid is isBasic
+    bool valid() {
+        return  this->value != NULL;
+    }
+    
+    bool equals(LatticeBase * other) {
+        return this->value==other->value;
+    }
+    void copy(LatticeBase * copyee) {
+        this->value  = copyee->value;
+        
+    }
+
+};
+*/
 class Flow {
 
 public :
-	static const string TOP;
-	static const string BOTTOM;
+   // LatticeBase * base;
+    //TriState is the world of lattice
+    //Bottom =1 , TOP 2 or NOT Bottom and TOP 0
+    int triPoint;
+
+ 
 
 	//The equality operator is used by the worklist algorithm and must be overloaded by the analysis.
 	virtual bool equals(Flow* other);
 
-	/*
-	 * This method is used by the JSONCFG function of the analysis to output the graph in JSON format.
-	 * It must output a proper representation of the flow in JSON format. For example, for constant propagation :
-	 *
-	 * 		{ "X" : 20,	"Y" : 35, "Z" : 2.23, "W" : "d"	}
-	 *
-	 * 	Where the left hand side are variable names and right hand side are constants.
-	 */
-	virtual string jsonString();
 
 	/**
 	 * The equality operator must also be overloaded when we want to assign a variable to top or bottom (or something else).
-	 */
+ */
 	virtual void copy(Flow *rhs);
 
 	/**
@@ -49,22 +78,20 @@ public :
 	 */
 	virtual Flow* join(Flow* other);
 
-	bool isBasic();
+	//bool isBasic();
 
-	bool basicEquals(Flow* other);
+	//bool basicEquals(Flow* other);
 
 	//You do not have to overload these constructors. You can create additional constructors with different signatures as well in your subclasses.
 	Flow();
-	Flow(string input);
+	//Flow(string input);
+    Flow(int triPoint);
 	Flow(Flow* flow);
 	//ConstantPropFlow(map<variable,int>());
 
 	//Destructor must be virtual.
 	virtual ~Flow();
 
-	//This string should only be used to represent TOP or BOTTOM.
-	string basic;
-    //virtual string arrowList();
 
 };
 

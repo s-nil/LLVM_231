@@ -12,6 +12,7 @@
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/Instruction.h"
 #include "llvm/Support/raw_ostream.h"
+#include "Lattice.h"
 #include "Flow.h"
 #include <map>
 #include <vector>
@@ -27,33 +28,6 @@ using namespace std;
 class StaticAnalysis {
 
 public :
-	struct ListEdge;
-
-	//Used for the nodes of the context flow graph
-	typedef struct ListNode {
-		int index;
-		vector<ListEdge*> incoming;
-		vector<ListEdge*> outgoing;
-		Instruction *inst; //uniquely identifies the node
-		ListNode(int idx){
-			index = idx;
-		}
-	} ListNode;
-
-	//Use for the edges of the context flow graph
-	typedef struct ListEdge{
-		Flow* flow;
-		ListNode* source;
-		ListNode* destination;
-		ListEdge(ListNode* src, ListNode* dst){
-			source = src;
-			destination = dst;
-			flow = new Flow();
-		}
-		~ListEdge(){
-			delete flow;
-		}
-	} ListEdge;
 
 	//This function implements our worklist. This class should not be overwritten.
 	void runWorklist();

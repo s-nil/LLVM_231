@@ -269,12 +269,12 @@ void PointerAnalysis::JSONNode(raw_ostream &OS, ListNode* node) {
 }
 
 Flow* PointerAnalysis::initialize(){
-	return new PointerAnalysisFlow(PointerAnalysisFlow::BOTTOM);
+	return new PointerAnalysisFlow(BOTTOM);
 }
 
-PointerAnalysis::PointerAnalysis(Function &F) : StaticAnalysis() {
-	this->top = new PointerAnalysisFlow(PointerAnalysisFlow::TOP);//Should be changed by subclasses of Flow to an instance of the subclass
-	this->bottom = new PointerAnalysisFlow(PointerAnalysisFlow::BOTTOM);//Should be changed by subclasses of Flow to an instance of the subclass
+PointerAnalysis::PointerAnalysis(Function &F){
+	this->top = new PointerAnalysisFlow(TOP);//Should be changed by subclasses of Flow to an instance of the subclass
+	this->bottom = new PointerAnalysisFlow(BOTTOM);//Should be changed by subclasses of Flow to an instance of the subclass
 	this->functionName = F.getName();
     CFGmaker(F);
 }

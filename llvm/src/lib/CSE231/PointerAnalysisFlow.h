@@ -15,6 +15,7 @@
 #include <sstream>
 #include "llvm/Support/raw_ostream.h"
 #include "Flow.h"
+#include "Lattice.h"
 
 using namespace std;
 using namespace llvm;
@@ -37,7 +38,7 @@ public:
 	 *
 	 * 	Where the left hand side are variable names and right hand side are also variable names.
 	 */
-	string jsonString();
+	//string jsonString();
 
     string arrowList();
 
@@ -55,7 +56,7 @@ public:
 	PointerAnalysisFlow();
 
 	//This constructor should be used for top or bottom.
-	PointerAnalysisFlow(string input);
+	PointerAnalysisFlow(int triPoint);
 
 	//Required for type casting within overloaded functions.
 	PointerAnalysisFlow(PointerAnalysisFlow* flow);

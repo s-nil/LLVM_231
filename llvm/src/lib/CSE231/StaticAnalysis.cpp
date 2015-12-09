@@ -12,7 +12,7 @@
  */
 #include "StaticAnalysis.h"
 
-StaticAnalysis::ListNode* StaticAnalysis::getCFG(){
+ListNode* StaticAnalysis::getCFG(){
 	return this->contextFlowGraph;
 }
 
@@ -65,11 +65,11 @@ void StaticAnalysis::runWorklist() {
 			//GET NEW OUTPUT INFORMATION BY JOINING WITH EXISTING FLOW IN EDGE
 			Flow* new_out = out->join(current->outgoing[i]->flow);
 			//IF INFORMATION HAS CHANGED, THEN PUSH TO WORKLIST
-			errs()<< current->index << " : new_out: "<<new_out->basic<<"\n";
+			errs()<< current->index << " : new_out: "<<new_out->triPoint<<"\n";
 			if (!(new_out->equals(current->outgoing[i]->flow))){
-				errs()<< current->index << " : new_out: "<<new_out->basic<<"\n";
+				errs()<< current->index << "flow was" << current->outgoing[i]->flow->triPoint<< "change to ===> " << " new_out: "<<new_out->triPoint<<"\n";
 				current->outgoing[i]->flow->copy(new_out);
-				worklist.push(current->outgoing[i]->destination);
+				worklist.push(current->outgoing[i]->dst);
 			}
 		}
 		worklist.pop();
@@ -89,14 +89,14 @@ void StaticAnalysis::CFGmaker(Function &F){
     Function::iterator BB = F.begin();
 	BasicBlock::iterator BI = BB->begin();
     Instruction * instruction = &*(BI); 
-    StaticAnalysis::ListNode * first = new StaticAnalysis::ListNode(index++);
+    ListNode * first = new ListNode(index++);
     first->inst = instruction;
     this->contextFlowGraph = first;
     this->CFGNodes.push_back(first);
     map[instruction] =  first;
     s.push(instruction);
     
-    StaticAnalysis::ListEdge* firstEdge = new StaticAnalysis::ListEdge(*CFGNodes.begin(),*CFGNodes.begin());
+    ListEdge* firstEdge = new ListEdge(*CFGNodes.begin(),*CFGNodes.begin());
    	(*CFGNodes.begin())->incoming.push_back(firstEdge);
    	this->CFGEdges.push_back(firstEdge);
 
@@ -150,12 +150,21 @@ void StaticAnalysis::CFGmaker(Function &F){
         }
        
     }
+	
+	/*
+	//Print out CFG
+	errs()<<"CFGNodes"<<"\n";
+	for(int i =0; i< CFGNodes.size();i++) {
+		errs<<CFGNodes[i].
+	}
+	errs()<< current->index << " : new_out: "<<new_out->triPoint<<"\n";
+	*/
 }
 /*
 void StaticAnalysis::buildCFG(Function &F){
 	Function::iterator BB = F.begin();
 	BasicBlock::iterator BI = BB->begin();
-	map<Instruction*,StaticAnalysis::ListNode*> helper;
+	map<Instruction*,ListNode*> helper;
 	int counter = 1;
 
 	//Build list nodes without successors.
@@ -163,9 +172,9 @@ void StaticAnalysis::buildCFG(Function &F){
 		BI = BB->begin();
 		for(BasicBlock::iterator BE = BB->end(); BI != BE; ++BI){
 			Instruction * instruction = dyn_cast<Instruction>(BI);
-			StaticAnalysis::ListNode* node = new StaticAnalysis::ListNode(counter++);
+			ListNode* node = new ListNode(counter++);
 			node->inst = instruction;
-			helper.insert(pair<Instruction*,StaticAnalysis::ListNode*>(instruction,node));
+			helper.insert(pair<Instruction*,ListNode*>(instruction,node));
 			CFGNodes.push_back(node);
 		}
    	}
@@ -173,14 +182,14 @@ void StaticAnalysis::buildCFG(Function &F){
    	//Make the root point to the first instruction
    	this->contextFlowGraph = CFGNodes[0];
    	//Create incoming edge for the first node (does not exist otherwise.
-   	StaticAnalysis::ListEdge* firstEdge = new StaticAnalysis::ListEdge(CFGNodes[0],CFGNodes[0]);
+   	ListEdge* firstEdge = new ListEdge(CFGNodes[0],CFGNodes[0]);
    	CFGNodes[0]->incoming.push_back(firstEdge);
    	CFGEdges.push_back(firstEdge);
 
    	//Go through each key value mapping and update the successor list.
-   	for (map<Instruction*,StaticAnalysis::ListNode*>::const_iterator it = helper.begin(); it != helper.end() ; ++it) {
+   	for (map<Instruction*,ListNode*>::const_iterator it = helper.begin(); it != helper.end() ; ++it) {
    		Instruction* inst = it->first;
-   		StaticAnalysis::ListNode* node = it->second;
+   		ListNode* node = it->second;
    		if(isa<BranchInst>(inst)){
    			//Several outgoing
    			BranchInst * br = dyn_cast<BranchInst>(inst);
@@ -189,8 +198,8 @@ void StaticAnalysis::buildCFG(Function &F){
    				Instruction * nextInst = &(*bb->begin());//bb->getFirstNonPHIOrDbgOrLifetime(); // Gets the first legitimate instruction.
    				if (nextInst!=0)
    					if (helper.find(nextInst)!=helper.end()) {
-   	   					StaticAnalysis::ListNode* nextNode = helper[nextInst];
-   	   					StaticAnalysis::ListEdge* edge = new StaticAnalysis::ListEdge(node,nextNode);
+   	   					ListNode* nextNode = helper[nextInst];
+   	   					ListEdge* edge = new ListEdge(node,nextNode);
    	   					node->outgoing.push_back(edge);
    	   					nextNode->incoming.push_back(edge);
    	   					CFGEdges.push_back(edge);
@@ -201,8 +210,8 @@ void StaticAnalysis::buildCFG(Function &F){
    			//Only one outgoing
    			if (inst->getNextNode()!=0)
    				if (helper.find(inst->getNextNode())!=helper.end()) {
-   					StaticAnalysis::ListNode* nextNode = helper[inst->getNextNode()];
-   					StaticAnalysis::ListEdge* edge = new StaticAnalysis::ListEdge(node,nextNode);
+   					ListNode* nextNode = helper[inst->getNextNode()];
+   					ListEdge* edge = new ListEdge(node,nextNode);
    					node->outgoing.push_back(edge);
    					nextNode->incoming.push_back(edge);
    					CFGEdges.push_back(edge);
@@ -231,12 +240,12 @@ void StaticAnalysis::JSONCFG(raw_ostream &OS) {
 }
 
 Flow* StaticAnalysis::initialize(){
-	return new Flow(Flow::BOTTOM);
+	return new Flow(BOTTOM);
 }
 
 void StaticAnalysis::JSONEdge(raw_ostream &OS, ListEdge* edge) {
-	OS << "{\"Edge\" : " << "[" << edge->source->index << "," << edge->destination->index << "],";
-	OS << "\"Flow\" : " << edge->flow->jsonString() << "}";
+	OS << "{\"Edge\" : " << "[" << edge->src->index << "," << edge->dst->index << "],";
+	//OS << "\"Flow\" : " << edge->flow->jsonString() << "}";
 }
 
 void StaticAnalysis::JSONNode(raw_ostream &OS, ListNode* node) {
@@ -275,12 +284,12 @@ Flow* StaticAnalysis::executeFlowFunction(Flow* in, Instruction *inst, int NodeI
 //	case:
 //
 //	}
-	return new Flow(Flow::TOP);
+	return new Flow(TOP);
 }
 
 StaticAnalysis::StaticAnalysis(Function &F){
-	top = new Flow(Flow::TOP);//Should be changed by subclasses of Flow to an instance of the subclass
-	bottom = new Flow(Flow::BOTTOM);//Should be changed by subclasses of Flow to an instance of the subclass
+	top = new Flow(TOP);//Should be changed by subclasses of Flow to an instance of the subclass
+	bottom = new Flow(BOTTOM);//Should be changed by subclasses of Flow to an instance of the subclass
 	this->functionName = F.getName();
 	CFGmaker(F);
 }

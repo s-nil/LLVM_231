@@ -13,15 +13,34 @@
  */
 bool PointerAnalysisFlow::equals(Flow* otherSuper) {
 	PointerAnalysisFlow* other = static_cast<PointerAnalysisFlow*>(otherSuper);
-	if (this->isBasic() || other->isBasic())
-		return this->basicEquals(other);
+	errs()<<"this->triPoint"<<this->triPoint<<" other->TriPoint"<<other->triPoint<<"\n";
+	if (this->triPoint || other->triPoint)
+		return this->triPoint == other->triPoint;
+	errs()<<"check values inside"<< "other " <<other->value.size()<<" this "<<this->value.size()<<"\n";
+	if (other->value.size()) {
+	
+		for (map<string, set<string> >::const_iterator it = other->value.begin(); it != other->value.end() ; it++) {
+		string key = it->first;
+		errs() << "has a key" << key <<"\n";
+		set<string> thisSet = it->second;
+		errs()<< "set sieze is " << thisSet.size()<<"\n";
+		for (set<string>::iterator it=thisSet.begin(); it!=thisSet.end(); ++it) {
+			errs()<<"print out other : "<<key<< "===>" << *it<<'\n';
+			 }
+		
+		
+		
+		}
+	
+	}
 	if (other->value.size()!=this->value.size())
 			return false;
+	errs()<<"size is same"<<this->value.size()<<"\n";
 	for (map<string, set<string> >::const_iterator it = this->value.begin(); it != this->value.end() ; it++) {
 		string key = it->first;
 		set<string> thisSet = it->second;
 		//Check if key is found in other
-		if(other->value.find(key)==other->value.end())
+		if(other->value.find(key) == other->value.end())
 			return false;
 		set<string> otherSet = other->value.find(key)->second;
 		 for (set<string>::iterator it=thisSet.begin(); it!=thisSet.end(); ++it) {
@@ -33,47 +52,12 @@ bool PointerAnalysisFlow::equals(Flow* otherSuper) {
 	return true;
 }
 
-//Represents a pointer analysis value as a JSON string.
-string PointerAnalysisFlow::jsonString() {
-	if (value.size()==0)
-		return "\"" + basic + "\"";
-	//Value has something inside
-	stringstream ss;
-	map<string, set<string> >::const_iterator it = this->value.begin();
-	ss << "{\"" << it->first << "\" : [ ";
-	set<string>::iterator its=it->second.begin();
-	if (its != it->second.end()) {
-	ss << *its << " "; its++;
-	}
-	for (; its != it->second.end() ; its++) {
-		ss << ", " << *its;
-	}
-	//errs() << "number of keys in set : " << it->second.size() << "\n";
- 	ss << " ] ";
- 	if (it != this->value.end())
- 		it++;
-	for (; it != this->value.end() ; it++) {
-		if (it->second.size()==0)
-			continue;
-		ss << ", \"" << it->first << "\" : [ ";
-		its=it->second.begin();
-		if (its != it->second.end()) {
-			ss << *its << " ";
-			its++;
-		}
-		for (; its != it->second.end() ; its++) {
-			ss << ", " << *its;
-		}
-		ss << "] ";
-	}
-	ss << "} end of the jsonString";
-	return ss.str();
-}
+
 
 
 string PointerAnalysisFlow::arrowList() {
 	if (value.size()==0)
-		return "\"" + basic + "\"";
+		return std::string ( ( this->triPoint ==BOTTOM ? "BOTTOM" : "TOP"));
 	//Value has something inside
 	stringstream ss;
 	//ss<<"in arrowList";
@@ -112,21 +96,37 @@ string PointerAnalysisFlow::arrowList() {
 
 void PointerAnalysisFlow::copy(Flow* rhs) {
 	PointerAnalysisFlow* f = static_cast<PointerAnalysisFlow*>(rhs);
-	this->basic = f->basic;
+	this->triPoint = f->triPoint;
 	this->value = f->value;
 }
-
+/*
 PointerAnalysisFlow::PointerAnalysisFlow() :
 		Flow() {
 }
 
-PointerAnalysisFlow::PointerAnalysisFlow(string input) :
-		Flow(input) {
+PointerAnalysisFlow::PointerAnalysisFlow(int triPoint) :
+		Flow(triPoint) {
 }
 
 PointerAnalysisFlow::PointerAnalysisFlow(PointerAnalysisFlow *flow) :
 		Flow(flow) {
 	this->value = flow->value;
+}
+*/
+
+
+PointerAnalysisFlow::PointerAnalysisFlow() {
+	this->triPoint = 0;
+}
+
+PointerAnalysisFlow::PointerAnalysisFlow(int triPoint)  {
+	this->triPoint = triPoint;
+}
+
+PointerAnalysisFlow::PointerAnalysisFlow(PointerAnalysisFlow *flow) {
+	this->triPoint = flow->triPoint;
+	this->value = flow->value;
+	
 }
 
 //Merges flow together.
@@ -134,23 +134,23 @@ Flow* PointerAnalysisFlow::join(Flow* otherSuper) {
 	//join bottom-bottom gives you bottom. Anything else gives you top.
 	PointerAnalysisFlow* other = static_cast<PointerAnalysisFlow*>(otherSuper);
 
-	if (this->basic == BOTTOM && other->basic == BOTTOM)
-		return new PointerAnalysisFlow(BOTTOM);
+	if (this->triPoint == BOTTOM && other->triPoint == BOTTOM)
+		return new PointerAnalysisFlow(triPoint);
 
 	//Anything joined with a bottom will just be itself.
-	if (this->basic == BOTTOM) {
+	if (this->triPoint == BOTTOM) {
 		PointerAnalysisFlow* f = new PointerAnalysisFlow();
 		f->copy(other);
 		return f;
 	}
-	if (other->basic == BOTTOM) {
+	if (other->triPoint == BOTTOM) {
 		PointerAnalysisFlow* f = new PointerAnalysisFlow();
 		f->copy(this);
 		return f;
 	}
 
 	//Join anything with top will give you top.
-	if (this->basic == TOP || other->basic == TOP)
+	if (this->triPoint == TOP || other->triPoint == TOP)
 		return new PointerAnalysisFlow(TOP);
 
 	//Merge the input from both.
@@ -170,6 +170,7 @@ Flow* PointerAnalysisFlow::join(Flow* otherSuper) {
 		for (set<string>::iterator j = other->value[key].begin(); j != other->value[key].end() ; j++)
 			values.insert(*j);
 		if (values.size()>0)
+			//insert into the new f
 			f->value[key] = values;
 	}
 	return f;

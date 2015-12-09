@@ -7,55 +7,44 @@
 
 
 #include "Flow.h"
-
-const string Flow::TOP = "top";
-const string Flow::BOTTOM = "bottom";
-
-/**
- * For the basic static analysis, just compare strings.
- */
+#include "Lattice.h"
 bool Flow::equals(Flow* other){
-	return this->basic==other->basic;
-}
-
-string Flow::jsonString(){
-	return "\"" + basic + "\"";
-}
-
-bool Flow::isBasic() {
-	return basic!="";
-}
-
-bool Flow::basicEquals(Flow* other){
-	return this->basic==other->basic;
+	return this->triPoint == other->triPoint;
 }
 
 void Flow::copy(Flow *rhs){
-	this->basic = rhs->basic;
+	 this->triPoint = rhs->triPoint;
 }
+
 
 Flow::Flow(){
-	basic = "";
+	//basic = "";
+    triPoint=0;
 }
-
+/*
 Flow::Flow(string input){
-	basic = input;
+	base = new LatticeBase(input);
+}*/
+Flow::Flow(int triPoint) {
+	this->triPoint = triPoint;
 }
-
 Flow::Flow(Flow* flow){
-	basic = flow->basic;
+
+    triPoint = flow->triPoint;
 }
 
-//Most basic join operation possible.
 Flow* Flow::join(Flow* other){
-	//join bottom-bottom gives you bottom. Anything else gives you top.
+
+		//join bottom-bottom gives you bottom. Anything else gives you top.
 	errs()<< "I just entered into the superclassed join... \n";
-	if (this->basic==BOTTOM && other->basic==BOTTOM)
+	if (this->triPoint==BOTTOM && other->triPoint==BOTTOM)
 		return new Flow(BOTTOM);
 	else
 		return new Flow(TOP);
+	
 }
 
 Flow::~Flow(){
-	//Nothing for basic static analysis
+	//Nothing happens here
+   
 }

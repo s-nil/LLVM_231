@@ -1,30 +1,10 @@
-//
-//  WorkListPass.cpp
-//  
-//
-//  Created by Jules Testard on 22/05/2014.
-//
-//
 
-/**
- * Note : use the errs() instead of std::cout in this file to output to the console (if your name is not mike and you don't have a fancy debugger that
- * took hours to install :).
- */
 #include "WorkList.h"
 
-
-
-/**
- * The run worklist is not much more than a classic BFS.
- * Notice that it processes one instruction at a time. Processing multiple instructions at a time will be much harder.
- */
 void WorkList::runWorklist() {
-	//We are using a queue for the worklist, but it could be any type of structure, really.
-	queue<ListNode*> worklist;
+	
+	queue<LatticeNode*> worklist;
 
-	//Set each edge to bottom :
-	//Top and bottom must be defined in order for the worklist to work.
-	//This step uses the operator= from the Flow class.
 	for (unsigned int i = 0; i < CFGEdges.size(); i++) {
 		CFGEdges[i]->flow = initialize();
 	}
@@ -36,7 +16,7 @@ void WorkList::runWorklist() {
 
 	while(!worklist.empty()){
 		//It is assumed that any node popped from the worklist has a complete "in" flow.
-		ListNode* current = worklist.front();
+		LatticeNode* current = worklist.front();
 		//GET INPUT FLOW AND JOIN INTO UNIQUE FLOW
 		vector<Flow*> inputFlows;
 		for (unsigned int i = 0 ; i < current->incoming.size() ; i++) {
@@ -79,7 +59,7 @@ void WorkList::runWorklist() {
 void WorkList::CFGmaker(Function &F){
     //DFS clone graph without recursion! yes
     //algorithm is at http://bangbingsyb.blogspot.com/2014/11/leetcode-clone-graph.html
-    map<Instruction *, ListNode *> map;
+    map<Instruction *, LatticeNode *> map;
     stack <Instruction *>  s;
     int index = 1;
     
@@ -87,21 +67,21 @@ void WorkList::CFGmaker(Function &F){
     Function::iterator BB = F.begin();
 	BasicBlock::iterator BI = BB->begin();
     Instruction * instruction = &*(BI); 
-    ListNode * first = new ListNode(index++);
+    LatticeNode * first = new LatticeNode(index++);
     first->inst = instruction;
     this->root = first;
     this->CFGNodes.push_back(first);
     map[instruction] =  first;
     s.push(instruction);
     
-    ListEdge* firstEdge = new ListEdge(*CFGNodes.begin(),*CFGNodes.begin());
+    LatticeEdge* firstEdge = new LatticeEdge(*CFGNodes.begin(),*CFGNodes.begin());
    	(*CFGNodes.begin())->incoming.push_back(firstEdge);
    	this->CFGEdges.push_back(firstEdge);
 
 
     while(!s.empty()) {
         Instruction * currentInst = s.top();
-        ListNode * curNode = map[currentInst];
+        LatticeNode * curNode = map[currentInst];
         s.pop();
 
 
@@ -127,16 +107,16 @@ void WorkList::CFGmaker(Function &F){
 
             if(map.count(currentChildInst)) {
                 //this inst has never been
-                ListNode * childNode = map[currentInst];
-                ListEdge * newEdge = new ListEdge(curNode,childNode);
+                LatticeNode * childNode = map[currentInst];
+                LatticeEdge * newEdge = new LatticeEdge(curNode,childNode);
                 curNode->outgoing.push_back(newEdge);
                 childNode->incoming.push_back(newEdge);
                 this->CFGEdges.push_back(newEdge);
             } else {
                 //create new Node which is not visited
-                ListNode * newNode = new ListNode(index++);
+                LatticeNode * newNode = new LatticeNode(index++);
                 newNode->inst = currentChildInst;
-                ListEdge * newEdge = new ListEdge(curNode, newNode);
+                LatticeEdge * newEdge = new LatticeEdge(curNode, newNode);
                 curNode->outgoing.push_back(newEdge);
                 newNode->incoming.push_back(newEdge);
                 map[currentChildInst]=newNode;
@@ -148,78 +128,8 @@ void WorkList::CFGmaker(Function &F){
         }
        
     }
-	
-	/*
-	//Print out CFG
-	errs()<<"CFGNodes"<<"\n";
-	for(int i =0; i< CFGNodes.size();i++) {
-		errs<<CFGNodes[i].
-	}
-	errs()<< current->index << " : new_out: "<<new_out->triPoint<<"\n";
-	*/
-}
-/*
-void WorkList::buildCFG(Function &F){
-	Function::iterator BB = F.begin();
-	BasicBlock::iterator BI = BB->begin();
-	map<Instruction*,ListNode*> helper;
-	int counter = 1;
-
-	//Build list nodes without successors.
-   	for (Function::iterator e = F.end() ; e != BB ; ++BB) {
-		BI = BB->begin();
-		for(BasicBlock::iterator BE = BB->end(); BI != BE; ++BI){
-			Instruction * instruction = dyn_cast<Instruction>(BI);
-			ListNode* node = new ListNode(counter++);
-			node->inst = instruction;
-			helper.insert(pair<Instruction*,ListNode*>(instruction,node));
-			CFGNodes.push_back(node);
-		}
-   	}
-
-   	//Make the root point to the first instruction
-   	this->root = CFGNodes[0];
-   	//Create incoming edge for the first node (does not exist otherwise.
-   	ListEdge* firstEdge = new ListEdge(CFGNodes[0],CFGNodes[0]);
-   	CFGNodes[0]->incoming.push_back(firstEdge);
-   	CFGEdges.push_back(firstEdge);
-
-   	//Go through each key value mapping and update the successor list.
-   	for (map<Instruction*,ListNode*>::const_iterator it = helper.begin(); it != helper.end() ; ++it) {
-   		Instruction* inst = it->first;
-   		ListNode* node = it->second;
-   		if(isa<BranchInst>(inst)){
-   			//Several outgoing
-   			BranchInst * br = dyn_cast<BranchInst>(inst);
-   			for (unsigned int i = 0 ; i < br->getNumSuccessors() ; i++) {
-   				BasicBlock * bb = br->getSuccessor(i); //Get successor basic block
-   				Instruction * nextInst = &(*bb->begin());//bb->getFirstNonPHIOrDbgOrLifetime(); // Gets the first legitimate instruction.
-   				if (nextInst!=0)
-   					if (helper.find(nextInst)!=helper.end()) {
-   	   					ListNode* nextNode = helper[nextInst];
-   	   					ListEdge* edge = new ListEdge(node,nextNode);
-   	   					node->outgoing.push_back(edge);
-   	   					nextNode->incoming.push_back(edge);
-   	   					CFGEdges.push_back(edge);
-   					}
-
-   			}
-   		} else {
-   			//Only one outgoing
-   			if (inst->getNextNode()!=0)
-   				if (helper.find(inst->getNextNode())!=helper.end()) {
-   					ListNode* nextNode = helper[inst->getNextNode()];
-   					ListEdge* edge = new ListEdge(node,nextNode);
-   					node->outgoing.push_back(edge);
-   					nextNode->incoming.push_back(edge);
-   					CFGEdges.push_back(edge);
-   				}
-   			//Weird bug here. getNextNode can point to a basic block instead of an instruction. Should be taken care of by the key check.
-   		}
-   	}
 }
 
-*/
 void WorkList::print(raw_ostream &OS) {
     //do some badthing os outputsteam
 	OS<<"oops in abstract class print"<<"\n";

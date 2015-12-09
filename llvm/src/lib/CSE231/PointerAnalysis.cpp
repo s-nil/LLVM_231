@@ -239,13 +239,13 @@ void PointerAnalysis::print(raw_ostream &OS) {
     }
 }
 
-void PointerAnalysis::JSONEdge(raw_ostream &OS, ListEdge* edge) {
+void PointerAnalysis::JSONEdge(raw_ostream &OS, LatticeEdge* edge) {
 	PointerAnalysisFlow * temp = (PointerAnalysisFlow * )edge->flow;
     OS << temp->arrowList() << "\n";
 
 }
 
-void PointerAnalysis::JSONNode(raw_ostream &OS, ListNode* node) {
+void PointerAnalysis::JSONNode(raw_ostream &OS, LatticeNode* node) {
     
 	OS << "representation : " << *(node->inst) << "\n";
 	OS << "#Edge incoming" << "\n";

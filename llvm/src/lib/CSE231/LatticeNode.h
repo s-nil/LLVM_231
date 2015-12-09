@@ -8,23 +8,23 @@
 #include "llvm/Support/raw_ostream.h"
 
 using namespace llvm;
-class ListEdge;
-class ListNode {
+class LatticeEdge;
+class LatticeNode {
 public:
     int index;
-    std::vector<ListEdge *> incoming;
-    std::vector<ListEdge *> outgoing;
+    std::vector<LatticeEdge *> incoming;
+    std::vector<LatticeEdge *> outgoing;
     Instruction * inst;
     
     
-    ListNode() {
+    LatticeNode() {
 
     }
-    ListNode(int index ) {
+    LatticeNode(int index ) {
         this->index = index;
     }
     void print() {
-        errs()<<"ListNode index is "<<index<<"\n";
+        errs()<<"LatticeNode index is "<<index<<"\n";
         
     }
 

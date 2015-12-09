@@ -1,7 +1,7 @@
 /**
  * Requirements :
  * 	-	Every static analysis must extend the WorkList class.
- * 	-	The listNode structure is used to store the results of the analysis.
+ * 	-	The LatticeNode structure is used to store the results of the analysis.
  *
  * 	Notice that we assume all static analyses use a function scope, in accordance with the Professor's instructions.
  */
@@ -48,9 +48,9 @@ public :
 	virtual Flow* initialize();
 	void CFGmaker(Function &F);
 
-	ListNode* root;
-	vector<ListNode*> CFGNodes;
-	vector<ListEdge*> CFGEdges;
+	LatticeNode* root;
+	vector<LatticeNode*> CFGNodes;
+	vector<LatticeEdge*> CFGEdges;
 	StringRef functionName;
 };
 #endif

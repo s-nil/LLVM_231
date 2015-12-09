@@ -2,7 +2,7 @@
  *
  * Requirements :
  * 	-	Every static analysis must extend the WorkList class.
- * 	-	The listNode structure is used to store the results of the analysis.
+ * 	-	The LatticeNode structure is used to store the results of the analysis.
  *
  * 	Notice that we assume all static analyses use a function scope, in accordance with the Professor's instructions.
  */
@@ -46,8 +46,8 @@ public :
 	Flow* initialize();
 
     void print(raw_ostream &OS);
-    void JSONNode(raw_ostream &OS, ListNode* node);
-    void JSONEdge(raw_ostream &OS, ListEdge* edge);
+    void JSONNode(raw_ostream &OS, LatticeNode* node);
+    void JSONEdge(raw_ostream &OS, LatticeEdge* edge);
     
 
 protected:

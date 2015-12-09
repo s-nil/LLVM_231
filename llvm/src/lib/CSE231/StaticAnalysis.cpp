@@ -76,6 +76,82 @@ void StaticAnalysis::runWorklist() {
 	}
 }
 
+
+
+void StaticAnalysis::CFGmaker(Function &F){
+    //DFS clone graph without recursion! yes
+    //algorithm is at http://bangbingsyb.blogspot.com/2014/11/leetcode-clone-graph.html
+    map<Instruction *, ListNode *> map;
+    stack <Instruction *>  s;
+    int index = 1;
+    
+    
+    Function::iterator BB = F.begin();
+	BasicBlock::iterator BI = BB->begin();
+    Instruction * instruction = &*(BI); 
+    StaticAnalysis::ListNode * first = new StaticAnalysis::ListNode(index++);
+    first->inst = instruction;
+    this->contextFlowGraph = first;
+    this->CFGNodes.push_back(first);
+    map[instruction] =  first;
+    s.push(instruction);
+    
+    StaticAnalysis::ListEdge* firstEdge = new StaticAnalysis::ListEdge(*CFGNodes.begin(),*CFGNodes.begin());
+   	(*CFGNodes.begin())->incoming.push_back(firstEdge);
+   	this->CFGEdges.push_back(firstEdge);
+
+
+    while(!s.empty()) {
+        Instruction * currentInst = s.top();
+        ListNode * curNode = map[currentInst];
+        s.pop();
+
+
+        //child instruct
+        vector <Instruction *> childsInst;
+        //Value *refValue = currentInst;
+        if(isa<BranchInst>(currentInst)) {
+            BranchInst * branchInst = dyn_cast<BranchInst>(currentInst);
+            for ( unsigned int i = 0 ; i < branchInst->getNumSuccessors() ; i++) {
+            BasicBlock * bb = branchInst->getSuccessor(i); //Get successor basic block
+            Instruction * nextInst = &*(bb->begin());//bb->getFirstNonPHIOrDbgOrLifetime(); // Gets the first legitimate instruction.
+            if(nextInst != NULL) childsInst.push_back(nextInst);
+            }
+        //not branch
+        } else {
+               //not end
+               //add following inst
+                if (currentInst->getNextNode()!=0) childsInst.push_back(currentInst->getNextNode());
+            }
+        //childs are ready, start dfs
+        for (unsigned int i =0; i < childsInst.size(); i++) {
+            Instruction * currentChildInst = childsInst[i];
+
+            if(map.count(currentChildInst)) {
+                //this inst has never been
+                ListNode * childNode = map[currentInst];
+                ListEdge * newEdge = new ListEdge(curNode,childNode);
+                curNode->outgoing.push_back(newEdge);
+                childNode->incoming.push_back(newEdge);
+                this->CFGEdges.push_back(newEdge);
+            } else {
+                //create new Node which is not visited
+                ListNode * newNode = new ListNode(index++);
+                newNode->inst = currentChildInst;
+                ListEdge * newEdge = new ListEdge(curNode, newNode);
+                curNode->outgoing.push_back(newEdge);
+                newNode->incoming.push_back(newEdge);
+                map[currentChildInst]=newNode;
+                s.push(currentChildInst);
+                this->CFGNodes.push_back(newNode);
+                this->CFGEdges.push_back(newEdge);
+            }
+
+        }
+       
+    }
+}
+/*
 void StaticAnalysis::buildCFG(Function &F){
 	Function::iterator BB = F.begin();
 	BasicBlock::iterator BI = BB->begin();
@@ -136,6 +212,7 @@ void StaticAnalysis::buildCFG(Function &F){
    	}
 }
 
+*/
 void StaticAnalysis::print(raw_ostream &OS) {
     //do some badthing os outputsteam
 	OS<<"oops in abstract class print"<<"\n";
@@ -205,7 +282,7 @@ StaticAnalysis::StaticAnalysis(Function &F){
 	top = new Flow(Flow::TOP);//Should be changed by subclasses of Flow to an instance of the subclass
 	bottom = new Flow(Flow::BOTTOM);//Should be changed by subclasses of Flow to an instance of the subclass
 	this->functionName = F.getName();
-	buildCFG(F);
+	CFGmaker(F);
 }
 
 StaticAnalysis::StaticAnalysis() {}

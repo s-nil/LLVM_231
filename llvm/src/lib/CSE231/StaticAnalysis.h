@@ -85,7 +85,7 @@ public :
 	 */
 	virtual Flow* initialize();
 
-	void buildCFG(Function &F);
+	void CFGmaker(Function &F);
 	static void JSONEdge(raw_ostream &OS, ListEdge* edge);
 	static void JSONNode(raw_ostream &OS, ListNode* node);
 	//The following attributes provide three different ways to circulate through the graph

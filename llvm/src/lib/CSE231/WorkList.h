@@ -1,11 +1,3 @@
-/**
- * Requirements :
- * 	-	Every static analysis must extend the WorkList class.
- * 	-	The LatticeNode structure is used to store the results of the analysis.
- *
- * 	Notice that we assume all static analyses use a function scope, in accordance with the Professor's instructions.
- */
-
 #ifndef STATIC_ANALYSIS
 #define STATIC_ANALYSIS
 #include "llvm/IR/Function.h"
@@ -24,7 +16,7 @@
 using namespace llvm;
 using namespace std;
 
-//Static Analysis class
+
 class WorkList {
 
 public :
@@ -37,10 +29,6 @@ public :
 	WorkList(Function &F);
 	WorkList(); 
 	virtual ~WorkList();
-
-
-//	Flow* top;
-//	Flow* bottom;
 
 	virtual Flow* executeFlowFunction(Flow *in, Instruction *inst, int NodeId);
 

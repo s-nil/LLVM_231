@@ -1,59 +1,4 @@
-
 #include "WorkList.h"
-
-void WorkList::runWorklist() {
-	
-	queue<LatticeNode*> worklist;
-
-	for (unsigned int i = 0; i < CFGEdges.size(); i++) {
-		CFGEdges[i]->flow = initialize();
-	}
-
-	//Add each node to the worklist
-	for (unsigned int i = 0 ; i < CFGNodes.size(); i++) {
-		worklist.push(CFGNodes[i]);
-	}
-
-	while(!worklist.empty()){
-		//It is assumed that any node popped from the worklist has a complete "in" flow.
-		LatticeNode* current = worklist.front();
-		errs()<<"star working on " <<*current->inst<<"\n";
-		//GET INPUT FLOW AND JOIN INTO UNIQUE FLOW
-		vector<Flow*> inputFlows;
-		for (unsigned int i = 0 ; i < current->incoming.size() ; i++) {
-			inputFlows.push_back(current->incoming[i]->flow);
-		}
-
-		//Since all edges have been initialized to a flow, inputFlows[0] never generates an exception.
-		Flow* in = initialize();
-		in->copy(inputFlows[0]);
-		for (unsigned int i = 1 ; i < inputFlows.size(); i++){
-			Flow* f = in->join(inputFlows[i]);
-			delete in; //The output is a copy of the existing flows, therefore we dont want to keep the old verison of in.
-			in = f;
-		}
-
-		//EXECUTE THE FLOW FUNCTION
-		Flow* out = executeFlowFunction(	in,					//Contains all known variable mappings for the flow function
-											current->inst, 		//Instruction to perform flow function on
-											current->index	);	//Basic block index
-
-
-		//This will executed the flow function
-		for(unsigned int i = 0 ; i < current->outgoing.size(); i++) {
-			//GET NEW OUTPUT INFORMATION BY JOINING WITH EXISTING FLOW IN EDGE
-			Flow* new_out = out->join(current->outgoing[i]->flow);
-			//IF INFORMATION HAS CHANGED, THEN PUSH TO WORKLIST
-			errs()<< current->index << " : new_out: "<<new_out->triPoint<<"\n";
-			if (!(new_out->equals(current->outgoing[i]->flow))){
-				errs()<< current->index << "flow was" << current->outgoing[i]->flow->triPoint<< "change to ===> " << " new_out: "<<new_out->triPoint<<"\n";
-				current->outgoing[i]->flow->copy(new_out);
-				worklist.push(current->outgoing[i]->dst);
-			}
-		}
-		worklist.pop();
-	}
-}
 
 
 
@@ -131,9 +76,63 @@ void WorkList::CFGmaker(Function &F){
     }
 }
 
+
+void WorkList::runWorklist() {
+	
+	queue<LatticeNode*> worklist;
+
+	for (unsigned int i = 0; i < CFGEdges.size(); i++) {
+		CFGEdges[i]->flow = initialize();
+	}
+
+	//Add to worklist
+	for (unsigned int i = 0 ; i < CFGNodes.size(); i++) {
+		worklist.push(CFGNodes[i]);
+	}
+
+	while(!worklist.empty()){
+		
+		LatticeNode* current = worklist.front();
+		errs()<<"star working on " <<*current->inst<<"\n";
+
+		vector<Flow*> inputFlows;
+		for (unsigned int i = 0 ; i < current->incoming.size() ; i++) {
+			inputFlows.push_back(current->incoming[i]->flow);
+		}
+
+		
+		Flow* in = initialize();
+		in->copy(inputFlows[0]);
+		for (unsigned int i = 1 ; i < inputFlows.size(); i++){
+			Flow* f = in->join(inputFlows[i]);
+			delete in; 
+			in = f;
+		}
+
+	
+		Flow* out = executeFlowFunction(in,	current->inst,current->index);	
+
+
+		//This will executed the flow function
+		for(unsigned int i = 0 ; i < current->outgoing.size(); i++) {
+	
+			Flow* new_out = out->join(current->outgoing[i]->flow);
+			//if output changes, push back
+			errs()<< current->index << " : new_out: "<<new_out->triPoint<<"\n";
+			if (!(new_out->equals(current->outgoing[i]->flow))){
+				errs()<< current->index << "flow was" << current->outgoing[i]->flow->triPoint<< "change to ===> " << " new_out: "<<new_out->triPoint<<"\n";
+				current->outgoing[i]->flow->copy(new_out);
+				worklist.push(current->outgoing[i]->dst);
+			}
+		}
+		worklist.pop();
+	}
+}
+
+
 void WorkList::print(raw_ostream &OS) {
-    //do some badthing os outputsteam
-	OS<<"oops in abstract class print"<<"\n";
+
+	OS<<"you shall not pass"<<"\n";
 }
 
 Flow* WorkList::initialize(){
@@ -148,8 +147,7 @@ Flow* WorkList::executeFlowFunction(Flow* in, Instruction *inst, int NodeId)
 }
 
 WorkList::WorkList(Function &F){
-	//top = new Flow(TOP);//Should be changed by subclasses of Flow to an instance of the subclass
-	//bottom = new Flow(BOTTOM);//Should be changed by subclasses of Flow to an instance of the subclass
+
 	this->functionName = F.getName();
 	CFGmaker(F);
 
@@ -158,16 +156,5 @@ WorkList::WorkList(Function &F){
 WorkList::WorkList() {}
 
 WorkList::~WorkList(){
-	/*
-	delete this->root;
-	//Might need to put something else here
-	for (unsigned int i = 0 ; i < CFGNodes.size() ; i++) {
-		delete CFGNodes[i];
-	}
-	for (unsigned int i = 0 ; i < CFGEdges.size() ; i++) {
-		delete CFGEdges[i];
-	}
-	delete top;
-	delete bottom;
-	*/
+
 }

@@ -29,7 +29,7 @@ Flow* PointerAnalysis::executeFlowFunction(Flow *in, Instruction *inst, int Node
 	}
 	return output;
 }
-//enum {X_rY = 1, X_Y =2,pX_Y =3,X_pY =4, KEEP_SAME};
+
 int PointerAnalysis::whoAmI(PointerAnalysisFlow * inFlow, Instruction * inst) {
 
 	errs()<<inst<<"\n";
@@ -73,11 +73,8 @@ bool PointerAnalysis::isPointer(Value * p) {
 bool PointerAnalysis::isVariable(Value * X) {
 	return X->getName() != "";
 }
-/**
- * C CODE : X = &Y
- * LLVM CODE :
- * store float* %Y, float** %X, align 4
- */
+
+
 PointerAnalysisFlow* PointerAnalysis::execute_X_equals_refY(PointerAnalysisFlow* in, Instruction* instruction) {
 	errs()<<"Start x=&y analysis ================================="<<"\n";
 	//Check that left operand is not null.
@@ -140,12 +137,13 @@ PointerAnalysisFlow* PointerAnalysis::execute_X_equals_Y(PointerAnalysisFlow* in
 
 	// X = Y
 	// Check if both operands (X & Y) are pointers.
-	if (Y->getType()->isPointerTy() && X->getType()->isPointerTy()) {
-		if (Y->getName()!="" && X->getName()!="") {
-			//Everything Y points to, X points to now as well.
+	if (isPointer(Y) && isPointer(X)) {
+		if (isVariable(Y) && isVariable(X)) {
+			
+			
+			//x points to what y points to 
 			PointerAnalysisFlow* ff = new PointerAnalysisFlow();
 			map<string, set<string> > value;
-			//Get the set of everything Y points from the in and make X point to it.
 			value[X->getName()] = in->value[Y->getName()];;
 			ff->value = value;
 			PointerAnalysisFlow* tmp = static_cast<PointerAnalysisFlow*>(ff->join(f));

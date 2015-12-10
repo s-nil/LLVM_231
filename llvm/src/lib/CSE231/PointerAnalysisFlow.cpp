@@ -9,23 +9,10 @@ bool PointerAnalysisFlow::equals(Flow* otherSuper) {
 		return this->triPoint == other->triPoint;
 		
 		
-	errs()<<"check values inside"<< "other " <<other->value.size()<<" this "<<this->value.size()<<"\n";
-	
-	if (other->value.size()) {
-	
-		for (map<string, set<string> >::const_iterator it = other->value.begin(); it != other->value.end() ; it++) {
-		string key = it->first;
-		errs() << "has a key" << key <<"\n";
-		set<string> thisSet = it->second;
-		errs()<< "set size is " << thisSet.size()<<"\n";
-		for (set<string>::iterator it=thisSet.begin(); it!=thisSet.end(); ++it) {
-			errs()<<"print out other : "<<key<< "--->" << *it<<'\n';
-		}
-		errs()<<"\n";
-		
-		}
-	
-	}
+	errs()<<"check this value"<<"\n:";
+	printValue(this->value);
+	errs()<<"\ncheck other value"<<"\n";
+	printValue(other->value);
 	
 	if (other->value.size()!=this->value.size())
 			return false;
@@ -37,7 +24,7 @@ bool PointerAnalysisFlow::equals(Flow* otherSuper) {
 		
 		
 		
-		if(other->value.count(key))
+		if(!other->value.count(key))
 			return false;
 		set<string> otherSet = other->value.find(key)->second;
 		 for (set<string>::iterator it=thisSet.begin(); it!=thisSet.end(); ++it) {
@@ -148,7 +135,25 @@ string PointerAnalysisFlow::arrowList() {
 }
 
 
-
+void PointerAnalysisFlow::printValue(map<string, set<string> > value) {
+	
+	errs()<<"value size is "<< value.size()<<"\n";
+	if (value.size()) {
+	
+		for (map<string, set<string> >::const_iterator it = value.begin(); it != value.end() ; it++) {
+		string key = it->first;
+		errs() << "has a key" << key <<"\n";
+		set<string> thisSet = it->second;
+		errs()<< "set size is " << thisSet.size()<<"\n";
+		for (set<string>::iterator it=thisSet.begin(); it!=thisSet.end(); ++it) {
+			errs()<<"print out other : "<<key<< "--->" << *it<<'\n';
+		}
+		errs()<<"\n";
+		
+		}
+	}
+	
+}
 
 PointerAnalysisFlow::PointerAnalysisFlow() {
 	this->triPoint = 0;

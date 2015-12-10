@@ -53,7 +53,7 @@ public:
 
 
 	map<string, set<string> > value;
-
+	void printValue(map<string, set<string> > value);
 };
 
 #endif

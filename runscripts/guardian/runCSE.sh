@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-pass="AvailableExpressionAnalysisOptimization"
+pass="CSEAnalysisOptimization"
 
 bench_path=$1
 

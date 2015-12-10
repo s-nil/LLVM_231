@@ -1,0 +1,11 @@
+#example run
+#guardian
+./runscripts/guardian/runPointer.sh ${CSE231ROOT}/P2test/optimizerSimple
+
+#artisan
+./runscripts/artisan/draw.sh ${CSE231ROOT}/P2test/optimizerSimple
+
+#miner
+./runscripts/miner/dig.sh ${CSE231ROOT}/P2test/optimizerSimple
+
+

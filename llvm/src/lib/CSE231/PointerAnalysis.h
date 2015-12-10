@@ -46,15 +46,16 @@ public :
 	static const int KEEP_SAME=5;
   
 
-protected:
-	PointerAnalysisFlow* execute_X_equals_refY(PointerAnalysisFlow* in, Instruction* inst);
-	PointerAnalysisFlow* execute_X_equals_Y(PointerAnalysisFlow* in, Instruction* inst);
-	PointerAnalysisFlow* execute_ptrX_equals_Y(PointerAnalysisFlow* in, Instruction* inst);
-	PointerAnalysisFlow* execute_X_equals_ptrY(PointerAnalysisFlow* in, Instruction* inst);\
+	
 	bool isPointer(Value * p);
 	bool isVariable(Value * p);
-//	PointerAnalysisFlow* execute_X_equals_NULL(PointerAnalysisFlow* in, Instruction* inst);
 	int whoAmI(PointerAnalysisFlow* in, Instruction* inst);
-	bool madeByLLVM(string name);
+	
+	//do operation task
+	PointerAnalysisFlow* operation_X_rY(PointerAnalysisFlow* in, Instruction* inst);
+	PointerAnalysisFlow* operation_X_Y(PointerAnalysisFlow* in, Instruction* inst);
+	PointerAnalysisFlow* operation_pX_Y(PointerAnalysisFlow* in, Instruction* inst);
+	PointerAnalysisFlow* operation_X_pY(PointerAnalysisFlow* in, Instruction* inst);
+	
 };
 #endif

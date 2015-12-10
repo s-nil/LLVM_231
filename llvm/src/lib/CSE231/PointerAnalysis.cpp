@@ -1,9 +1,5 @@
 #include "PointerAnalysis.h"
-/*
- * For basic static analysis, flow is just "assigned to top", which just means the basic string from the Flow general class will be top.
- * This method is expected to do much more when overloaded.
- * We use the presence of names in the instructions in LLVM.
- */
+
 Flow* PointerAnalysis::executeFlowFunction(Flow *in, Instruction *inst, int NodeId){
 	PointerAnalysisFlow* inFlow = static_cast<PointerAnalysisFlow*>(in);
 	PointerAnalysisFlow * output;
@@ -12,16 +8,16 @@ Flow* PointerAnalysis::executeFlowFunction(Flow *in, Instruction *inst, int Node
 	int opType = whoAmI(inFlow,inst);
 	switch(opType) {
 		case  X_rY:
-				output = execute_X_equals_refY(inFlow,inst);
+				output = operation_X_rY(inFlow,inst);
 				break;
 		case  X_Y:
-				output = execute_X_equals_Y(inFlow,inst);
+				output = operation_X_Y(inFlow,inst);
 				break;
 		case  pX_Y:
-				output = execute_ptrX_equals_Y(inFlow,inst);
+				output = operation_pX_Y(inFlow,inst);
 				break;
 		case  X_pY:
-				output = execute_X_equals_ptrY(inFlow,inst);
+				output = operation_X_pY(inFlow,inst);
 				break;
 		default:
 				output = new PointerAnalysisFlow(inFlow);
@@ -67,15 +63,10 @@ int PointerAnalysis::whoAmI(PointerAnalysisFlow * inFlow, Instruction * inst) {
 	
 }
 
-bool PointerAnalysis::isPointer(Value * p) {
-	return p->getType()->isPointerTy();
-}
-bool PointerAnalysis::isVariable(Value * X) {
-	return X->getName() != "";
-}
 
 
-PointerAnalysisFlow* PointerAnalysis::execute_X_equals_refY(PointerAnalysisFlow* in, Instruction* instruction) {
+
+PointerAnalysisFlow* PointerAnalysis::operation_X_rY(PointerAnalysisFlow* in, Instruction* instruction) {
 	errs()<<"Start x=&y analysis ================================="<<"\n";
 	//Check that left operand is not null.
 	
@@ -98,15 +89,13 @@ PointerAnalysisFlow* PointerAnalysis::execute_X_equals_refY(PointerAnalysisFlow*
 	errs()<<"Not Null Pointer, move on"<<"\n";
 	StoreInst* store = static_cast<StoreInst*>(instruction);
 	PointerAnalysisFlow* f = new PointerAnalysisFlow(in);
+	
 	// X = &Y
-	//Check if right operand is a pointer
+	//Check if right  is a pointer
 	if (store->getOperand(1)->getType()->isPointerTy()) {
-		//Check if left & right operand names are non empty.
+		//Check if x y  names are variable
 		if (store->getOperand(0)->getName()!="" && store->getOperand(1)->getName()!="") {
-			/*
-			if (madeByLLVM(store->getOperand(0)->getName())) {
-				return f;
-			}*/
+
 			PointerAnalysisFlow* ff = new PointerAnalysisFlow();
 			set<string> s;
 			map<string, set<string> >value;
@@ -123,24 +112,18 @@ PointerAnalysisFlow* PointerAnalysis::execute_X_equals_refY(PointerAnalysisFlow*
 	return f;
 }
 
-/**
- * C CODE : X = Y
- * LLVM CODE :
- * %0 = load float** %Y, align 4
- * store float* %0, float** %X, align 4
- */
-PointerAnalysisFlow* PointerAnalysis::execute_X_equals_Y(PointerAnalysisFlow* in, Instruction* instruction) {
+
+PointerAnalysisFlow* PointerAnalysis::operation_X_Y(PointerAnalysisFlow* in, Instruction* instruction) {
 	LoadInst* load = static_cast<LoadInst*>(instruction);
 	PointerAnalysisFlow* f = new PointerAnalysisFlow(in);
 	Value* Y = load->getOperand(0); //RO
 	Value* X = load->getNextNode()->getOperand(1); //LO
 
 	// X = Y
-	// Check if both operands (X & Y) are pointers.
+	// Check if X  Y are pointers.
 	if (isPointer(Y) && isPointer(X)) {
 		if (isVariable(Y) && isVariable(X)) {
-			
-			
+
 			//x points to what y points to 
 			PointerAnalysisFlow* ff = new PointerAnalysisFlow();
 			map<string, set<string> > value;
@@ -155,14 +138,7 @@ PointerAnalysisFlow* PointerAnalysis::execute_X_equals_Y(PointerAnalysisFlow* in
 	return f;
 }
 
-/**
- * C CODE : *X = Y
- * LLVM CODE :
- * %0 = load float** %Y, align 4
- * %1 = load float*** %X, align 4
- * store float* %0, float** %1, align 4
- */
-PointerAnalysisFlow* PointerAnalysis::execute_ptrX_equals_Y(PointerAnalysisFlow* in, Instruction* instruction){
+PointerAnalysisFlow* PointerAnalysis::operation_pX_Y(PointerAnalysisFlow* in, Instruction* instruction){
 	PointerAnalysisFlow* f = new PointerAnalysisFlow(in);
 	Value* Y = instruction->getOperand(0); //RO
 	Value* X = instruction->getNextNode()->getOperand(0); //LO
@@ -170,13 +146,14 @@ PointerAnalysisFlow* PointerAnalysis::execute_ptrX_equals_Y(PointerAnalysisFlow*
 	if (Y->getType()->isPointerTy() && X->getType()->isPointerTy()) {
 		if (Y->getName()!="" && X->getName()!="") {
 			//Everything Y points to, *X points to now as well.
+			//*X points to Y points to 
 			PointerAnalysisFlow* ff = new PointerAnalysisFlow();
 			set<string> pointedByX = in->value[X->getName()];
 			map<string, set<string> > value;
 			for (set<string>::iterator it = pointedByX.begin() ; it != pointedByX.end() ; it++) {
-				//if X points to W, then W points to everything Y points to.
-				string W = *it;
-				value[W] = in->value[Y->getName()];
+
+				string x = *it;
+				value[x] = in->value[Y->getName()];
 			}
 			ff->value = value;
 			PointerAnalysisFlow* tmp = static_cast<PointerAnalysisFlow*>(ff->join(f));
@@ -188,14 +165,8 @@ PointerAnalysisFlow* PointerAnalysis::execute_ptrX_equals_Y(PointerAnalysisFlow*
 	return f;
 }
 
-/**
- * C CODE : X = *Y
- * LLVM CODE :
- * %0 = load float*** %Y, align 4
- * %1 = load float** %0, align 4
- * store float* %1, float** %X, align 4
- */
-PointerAnalysisFlow* PointerAnalysis::execute_X_equals_ptrY(PointerAnalysisFlow* in, Instruction* instruction) {
+
+PointerAnalysisFlow* PointerAnalysis::operation_X_pY(PointerAnalysisFlow* in, Instruction* instruction) {
 	PointerAnalysisFlow* f = new PointerAnalysisFlow(in);
 	Value* Y = instruction->getOperand(0);
 	Value* X = instruction->getNextNode()->getNextNode()->getOperand(1);
@@ -217,41 +188,10 @@ PointerAnalysisFlow* PointerAnalysis::execute_X_equals_ptrY(PointerAnalysisFlow*
 	}
 	return f;
 }
-/**/
-/**
- * C CODE : X = NULL
- * store float* null, float** %X, align 4
- */
- /*
-PointerAnalysisFlow* PointerAnalysis::execute_X_equals_NULL(PointerAnalysisFlow* in, Instruction* instruction) {
-	errs()<<"Start x=NULL analysis ================================="<<"\n";
-	PointerAnalysisFlow* f = new PointerAnalysisFlow(in);
 
-	//if C CODE : X = NULL
-	 if (isa<StoreInst>(instruction)) {
-		Value* X = instruction->getOperand(1);
-		if (X->getType()->isPointerTy() && X->getName() != "") {
-			errs()<<"Remove  " <<X->getName()<<" from list"<<"\n";
-			f->value.erase(X->getName());
-		}
-		return f;
-	} else {
-		return f;
-	}
-}
-*/
-/*
-bool PointerAnalysis::madeByLLVM(string name) {
-	if(name.substr(name.find_last_of(".") + 1) == "ptr") {
-		return true;
-	} else {
-		return false;
-	}
-}
-*/
 
 void PointerAnalysis::print(raw_ostream &OS) {
-    //The graph data representationion is now edge-based.
+
     for (unsigned int i = 0; i < CFGNodes.size() ; i++) {
         this->printHelper(OS,this->CFGNodes[i]);
         if(i+1 < CFGNodes.size()) {
@@ -267,26 +207,29 @@ void PointerAnalysis::printHelper(raw_ostream &OS, LatticeNode* node) {
 	OS << "representation : " << *(node->inst) << "\n";
 	OS << "#Edge incoming" << "\n";
     for (unsigned int i = 0 ; i < node->incoming.size() ; i++) {
-        //this->JSONEdge(OS,node->incoming[i]);
+ 
 		PointerAnalysisFlow * temp = (PointerAnalysisFlow * )node->incoming[i]->flow;
 		OS << temp->arrowList() << "\n";
-    //    if (i+1<node->incoming.size())
-       //     OS << "\n";
 
     }
 	OS << "\n";
 	
  	OS << "#Edge outcoming" << "\n";
     for (unsigned int i = 0 ; i < node->outgoing.size() ; i++) {
-      //  this->JSONEdge(OS,node->outgoing[i]);
+
 		PointerAnalysisFlow * temp = (PointerAnalysisFlow * )node->outgoing[i]->flow;
 		OS<<temp->arrowList()<<"\n";
-      //  if (i+1<node->outgoing.size())
-       //     OS << "\n";
-
+ 
     }
 
 
+}
+
+bool PointerAnalysis::isPointer(Value * p) {
+	return p->getType()->isPointerTy();
+}
+bool PointerAnalysis::isVariable(Value * X) {
+	return X->getName() != "";
 }
 
 Flow* PointerAnalysis::initialize(){
@@ -294,8 +237,7 @@ Flow* PointerAnalysis::initialize(){
 }
 
 PointerAnalysis::PointerAnalysis(Function &F){
-	//this->top = new PointerAnalysisFlow(TOP);//Should be changed by subclasses of Flow to an instance of the subclass
-	//this->bottom = new PointerAnalysisFlow(BOTTOM);//Should be changed by subclasses of Flow to an instance of the subclass
+
 	this->functionName = F.getName();
     CFGmaker(F);
 }

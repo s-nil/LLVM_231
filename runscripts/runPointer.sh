@@ -23,6 +23,9 @@ opt -load $LLVMLIB/CSE231.so -$pass < $bench.bc -analyze > $OUTPUTLOGS/$bench/$b
 #output bc to ll for you check
 opt -load $LLVMLIB/CSE231.so -$pass < $bench.bc > $OUTPUTLOGS/$bench/$bench.pointer.bc
 llvm-dis $OUTPUTLOGS/$bench/$bench.pointer.bc
+
+#copy the original cpp file
+cp $bench_path/$bench.cpp $OUTPUTLOGS/$bench/$bench.cpp
 #runthis
 #./runscripts/runPointer.sh P2test/pointerAnalysisSimple
 

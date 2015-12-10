@@ -26,7 +26,8 @@
 using namespace llvm;
 using namespace std;
 
-//Static Analysis class
+
+
 class PointerAnalysis : public WorkList {
 
 public :
@@ -38,14 +39,22 @@ public :
 
     void print(raw_ostream &OS);
     void printHelper(raw_ostream &OS, LatticeNode* node);
+	static const int X_rY = 1;
+	static const int X_Y =2;
+	static const int pX_Y =3;
+	static const int X_pY =4;
+	static const int KEEP_SAME=5;
   
 
 protected:
 	PointerAnalysisFlow* execute_X_equals_refY(PointerAnalysisFlow* in, Instruction* inst);
 	PointerAnalysisFlow* execute_X_equals_Y(PointerAnalysisFlow* in, Instruction* inst);
 	PointerAnalysisFlow* execute_ptrX_equals_Y(PointerAnalysisFlow* in, Instruction* inst);
-	PointerAnalysisFlow* execute_X_equals_ptrY(PointerAnalysisFlow* in, Instruction* inst);
-	PointerAnalysisFlow* execute_X_equals_NULL(PointerAnalysisFlow* in, Instruction* inst);
+	PointerAnalysisFlow* execute_X_equals_ptrY(PointerAnalysisFlow* in, Instruction* inst);\
+	bool isPointer(Value * p);
+	bool isVariable(Value * p);
+//	PointerAnalysisFlow* execute_X_equals_NULL(PointerAnalysisFlow* in, Instruction* inst);
+	int whoAmI(PointerAnalysisFlow* in, Instruction* inst);
 	bool madeByLLVM(string name);
 };
 #endif

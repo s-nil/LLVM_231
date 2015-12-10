@@ -1,5 +1,12 @@
-#define NULL 0
+
 int main() {
-	int * a = NULL;
-	return 0;
+	int b; 
+	int * a;
+
+	b = 5;
+	a = &b;
+
+	//0 is null here
+	a = 0;
+	
 }

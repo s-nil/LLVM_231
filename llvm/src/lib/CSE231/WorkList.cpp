@@ -17,6 +17,7 @@ void WorkList::runWorklist() {
 	while(!worklist.empty()){
 		//It is assumed that any node popped from the worklist has a complete "in" flow.
 		LatticeNode* current = worklist.front();
+		errs()<<"star working on " <<*current->inst<<"\n";
 		//GET INPUT FLOW AND JOIN INTO UNIQUE FLOW
 		vector<Flow*> inputFlows;
 		for (unsigned int i = 0 ; i < current->incoming.size() ; i++) {

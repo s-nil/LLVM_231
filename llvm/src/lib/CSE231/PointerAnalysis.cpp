@@ -7,51 +7,98 @@
 Flow* PointerAnalysis::executeFlowFunction(Flow *in, Instruction *inst, int NodeId){
 	PointerAnalysisFlow* inFlow = static_cast<PointerAnalysisFlow*>(in);
 	PointerAnalysisFlow * output;
-	switch(inst->getOpcode()) {
-	case 29 : // getelementptr instruction. Used when incrementing a pointer.
-		output = execute_X_equals_NULL(inFlow,inst);
-		break;
-	case 28 : // Store instructions are X = &Y
-		output = execute_X_equals_refY(inFlow,inst);
-		break;
-	case 27 : //Load instruction
+	errs()<<inst<<"\n";
+
+	int opType = whoAmI(inFlow,inst);
+	switch(opType) {
+		case  X_rY:
+				output = execute_X_equals_refY(inFlow,inst);
+				break;
+		case  X_Y:
+				output = execute_X_equals_Y(inFlow,inst);
+				break;
+		case  pX_Y:
+				output = execute_ptrX_equals_Y(inFlow,inst);
+				break;
+		case  X_pY:
+				output = execute_X_equals_ptrY(inFlow,inst);
+				break;
+		default:
+				output = new PointerAnalysisFlow(inFlow);
+
+	}
+	return output;
+}
+//enum {X_rY = 1, X_Y =2,pX_Y =3,X_pY =4, KEEP_SAME};
+int PointerAnalysis::whoAmI(PointerAnalysisFlow * inFlow, Instruction * inst) {
+
+	errs()<<inst<<"\n";
+	int opcode = inst->getOpcode();
+	if (opcode == 28)   {
+		// 28 is sotre
+		//store i32 5, i32* %y, align 4
+		//which means x = &y  (NOTICE x=NULL is also in this range, y here is NULL)
+		//store i32* %y, i32** %x1, align 8
+		//for x ==NULL
+		// store i32* null, i32** %a, align 8
+		return  X_rY;
+	}
+	if (opcode ==29) 
+	    //opcode 29 is Load 
 		//If one load followed by one store, then is X = Y
 		//If two loads followed by one store, then is *X = Y
 		{
 			Instruction* nInst = inst->getNextNode();
 			Instruction* nnInst = nInst->getNextNode();
 			if(isa<StoreInst>(nInst)) {
-				output = execute_X_equals_Y(inFlow,inst);
+				return  X_Y;
 			} else if (isa<LoadInst>(nInst) && isa<StoreInst>(nnInst)) {
 				if (inst->getOperand(0)->getName()!="" && nInst->getOperand(0)->getName()!="")
-					output = execute_ptrX_equals_Y(inFlow,inst);
+					return  pX_Y;
 				else if (inst->getOperand(0)->getName()!="" && nnInst->getOperand(1)->getName()!="")
-					output = execute_X_equals_ptrY(inFlow,inst);
-				else
-					output = new PointerAnalysisFlow(inFlow);
-			} else {
-				output = new PointerAnalysisFlow(inFlow);
-			}
-			break;
+					return  X_pY;			
+	
 		}
-	default:
-		output = new PointerAnalysisFlow(inFlow);
-		break;
-	}
-	return output;
+		}
+		
+	return  KEEP_SAME;
+
+
+	
 }
 
+bool isPointer(Value * p) {
+	return p->getType()->isPointerTy();
+}
+bool isVariable(Value * X) {
+	return X->getName() != "";
+}
 /**
  * C CODE : X = &Y
  * LLVM CODE :
  * store float* %Y, float** %X, align 4
  */
 PointerAnalysisFlow* PointerAnalysis::execute_X_equals_refY(PointerAnalysisFlow* in, Instruction* instruction) {
+	errs()<<"Start x=&y analysis ================================="<<"\n";
 	//Check that left operand is not null.
+	
 	if (isa<ConstantPointerNull>(instruction->getOperand(0))) {
-		return execute_X_equals_NULL(in,instruction);
+		errs()<<"Null Pointer!!!"<<"\n";
+		PointerAnalysisFlow* f = new PointerAnalysisFlow(in);
+		Value* X = instruction->getOperand(1);
+		if (isPointer(X) && isVariable(X)) {
+			errs()<<"Remove  " <<X->getName()<<" from list"<<"\n";
+			f->value.erase(X->getName());
+		}
+		
+		//very important if value is empty, then it is a bottom
+		if(f->value.size()==0) {
+			f->triPoint=BOTTOM;
+		}
+		return f;
+		//return execute_X_equals_NULL(in,instruction);
 	}
-
+	errs()<<"Not Null Pointer, move on"<<"\n";
 	StoreInst* store = static_cast<StoreInst*>(instruction);
 	PointerAnalysisFlow* f = new PointerAnalysisFlow(in);
 	// X = &Y
@@ -59,9 +106,10 @@ PointerAnalysisFlow* PointerAnalysis::execute_X_equals_refY(PointerAnalysisFlow*
 	if (store->getOperand(1)->getType()->isPointerTy()) {
 		//Check if left & right operand names are non empty.
 		if (store->getOperand(0)->getName()!="" && store->getOperand(1)->getName()!="") {
+			/*
 			if (madeByLLVM(store->getOperand(0)->getName())) {
 				return f;
-			}
+			}*/
 			PointerAnalysisFlow* ff = new PointerAnalysisFlow();
 			set<string> s;
 			map<string, set<string> >value;
@@ -171,29 +219,21 @@ PointerAnalysisFlow* PointerAnalysis::execute_X_equals_ptrY(PointerAnalysisFlow*
 	}
 	return f;
 }
-
+/**/
 /**
  * C CODE : X = NULL
  * store float* null, float** %X, align 4
- * C CODE : X = Y+i
- * %add.ptr = getelementptr inbounds float** %Y, i32 i
- * store float** %add.ptr, float** %X, align 4
  */
+ /*
 PointerAnalysisFlow* PointerAnalysis::execute_X_equals_NULL(PointerAnalysisFlow* in, Instruction* instruction) {
+	errs()<<"Start x=NULL analysis ================================="<<"\n";
 	PointerAnalysisFlow* f = new PointerAnalysisFlow(in);
-	// if C CODE : X = Y+i
-	//it will have 
-	if (isa<GetElementPtrInst>(instruction)) {
-		Value* X = instruction->getNextNode()->getOperand(1);
-		if (X->getType()->isPointerTy() && X->getName() != "") {
-			f->value.erase(X->getName());
-		}
-		return f;
-	}
+
 	//if C CODE : X = NULL
-	else if (isa<StoreInst>(instruction)) {
+	 if (isa<StoreInst>(instruction)) {
 		Value* X = instruction->getOperand(1);
 		if (X->getType()->isPointerTy() && X->getName() != "") {
+			errs()<<"Remove  " <<X->getName()<<" from list"<<"\n";
 			f->value.erase(X->getName());
 		}
 		return f;
@@ -201,7 +241,8 @@ PointerAnalysisFlow* PointerAnalysis::execute_X_equals_NULL(PointerAnalysisFlow*
 		return f;
 	}
 }
-
+*/
+/*
 bool PointerAnalysis::madeByLLVM(string name) {
 	if(name.substr(name.find_last_of(".") + 1) == "ptr") {
 		return true;
@@ -209,7 +250,7 @@ bool PointerAnalysis::madeByLLVM(string name) {
 		return false;
 	}
 }
-
+*/
 
 void PointerAnalysis::print(raw_ostream &OS) {
     //The graph data representationion is now edge-based.

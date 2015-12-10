@@ -72,7 +72,7 @@ def readFile(filename):
             IRcluster.cluster.append(ir)
 
             
-readFile("pointerAnalysisSimple.pointer.log")
+
 #print IR_list
 '''
 for i in range(len(IR_list)):
@@ -118,6 +118,7 @@ def getDotCode(IR_cluster):
 
 
 def main():
+    readFile("x=NULL.pointer.log")
     window = MyDotWindow()
     window.set_dotcode( getDotCode(getNextIR()))
     window.set_title("CSE231")

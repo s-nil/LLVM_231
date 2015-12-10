@@ -4,16 +4,19 @@ bool PointerAnalysisFlow::equals(Flow* otherSuper) {
 	PointerAnalysisFlow* other = static_cast<PointerAnalysisFlow*>(otherSuper);
 	
 	//print our for test 
+	errs()<<"************Start ***********"<<"\n";
 	errs()<<"this->triPoint"<<this->triPoint<<" other->TriPoint"<<other->triPoint<<"\n";
-	if (this->triPoint || other->triPoint)
+	if (this->triPoint || other->triPoint) {
+		errs()<<"************end for TOP or BOTTOM TYPE ***********"<<"\n";
 		return this->triPoint == other->triPoint;
+	}
 		
 		
 	errs()<<"check this value"<<"\n:";
 	printValue(this->value);
 	errs()<<"\ncheck other value"<<"\n";
 	printValue(other->value);
-	
+	errs()<<"************end ***********"<<"\n";
 	if (other->value.size()!=this->value.size())
 			return false;
 	errs()<<"size is same"<<this->value.size()<<"\n";
@@ -142,13 +145,13 @@ void PointerAnalysisFlow::printValue(map<string, set<string> > value) {
 	
 		for (map<string, set<string> >::const_iterator it = value.begin(); it != value.end() ; it++) {
 		string key = it->first;
-		errs() << "has a key" << key <<"\n";
+		errs() << "key: " << key<<"\n" ;
 		set<string> thisSet = it->second;
-		errs()<< "set size is " << thisSet.size()<<"\n";
+		errs()<< "set size : " << thisSet.size()<<" [";
 		for (set<string>::iterator it=thisSet.begin(); it!=thisSet.end(); ++it) {
-			errs()<<"print out other : "<<key<< "--->" << *it<<'\n';
+			errs()<< key<< " --->" << *it <<" ";
 		}
-		errs()<<"\n";
+		errs()<<"]\n";
 		
 		}
 	}

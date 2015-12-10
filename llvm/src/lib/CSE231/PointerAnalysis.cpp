@@ -67,10 +67,10 @@ int PointerAnalysis::whoAmI(PointerAnalysisFlow * inFlow, Instruction * inst) {
 	
 }
 
-bool isPointer(Value * p) {
+bool PointerAnalysis::isPointer(Value * p) {
 	return p->getType()->isPointerTy();
 }
-bool isVariable(Value * X) {
+bool PointerAnalysis::isVariable(Value * X) {
 	return X->getName() != "";
 }
 /**

@@ -11,5 +11,5 @@
 !/report_one/
 !/P2test/
 *.swp
-~/P2
+!/P2
 *~

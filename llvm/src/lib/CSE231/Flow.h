@@ -10,6 +10,34 @@
 using namespace std;
 using namespace llvm;
 
+
+class Flow {
+
+public :
+    // LatticeBase * base;
+    //TriState is the world of lattice
+    //Bottom =1 , TOP 2 or NOT Bottom and TOP 0
+    int triPoint;
+
+	virtual bool equals(Flow* other);
+
+	//copy Flow
+	virtual void copy(Flow *rhs);
+    //join flow
+	virtual Flow* join(Flow* other);
+
+	Flow();
+
+    Flow(int triPoint);
+	Flow(Flow* flow);
+
+	virtual ~Flow();
+
+
+};
+
+
+//old LatticeBase, does not use any more, use triPOint instead
 /*
 class LatticeBase {
 public:
@@ -40,32 +68,5 @@ public:
 
 };
 */
-class Flow {
-
-public :
-    // LatticeBase * base;
-    //TriState is the world of lattice
-    //Bottom =1 , TOP 2 or NOT Bottom and TOP 0
-    int triPoint;
-
-	virtual bool equals(Flow* other);
-
-
-	//copy Flow
-	virtual void copy(Flow *rhs);
-    //join flow
-	virtual Flow* join(Flow* other);
-
-	Flow();
-
-    Flow(int triPoint);
-	Flow(Flow* flow);
-
-	virtual ~Flow();
-
-
-};
-
-
 
 #endif

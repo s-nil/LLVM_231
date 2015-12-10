@@ -26,6 +26,9 @@ llvm-dis $OUTPUTLOGS/$bench/$bench.pointer.bc
 
 #copy the original cpp file
 cp $bench_path/$bench.cpp $OUTPUTLOGS/$bench/$bench.cpp
+
+#draw graph
+python ${CSE231ROOT}/runscripts/drawGraph/artisan.py $OUTPUTLOGS/$bench/$bench.pointer.log
 #runthis
 #./runscripts/runPointer.sh P2test/pointerAnalysisSimple
 

@@ -1,7 +1,9 @@
+#!/usr/bin/python
 import gtk
 import gtk.gdk
 import xdot
 import re
+import sys
 
 
 #read data
@@ -20,6 +22,8 @@ class IR:
         self.direction = direction
         self.Instname = Instname
         self.pointerStatus = pointerStatus
+        
+        
 class IR_cluster:
     def __init__(self):
         self.cluster = []
@@ -44,6 +48,7 @@ def readFile(filename):
     IRcluster = IR_cluster()
     for line in file.readlines():
         line=line.strip()
+        print line
         if not line or line =="\n" or line== " " or line =="=======":
             continue
         matchFunctionName = re.match(r'.*Function.*',line)
@@ -70,6 +75,7 @@ def readFile(filename):
             IR_list.append(IRcluster)
             IRcluster = IR_cluster()
             IRcluster.cluster.append(ir)
+    print IRcluster
 
             
 
@@ -107,9 +113,12 @@ class MyDotWindow(xdot.DotWindow):
 
 
 def getDotCode(IR_cluster):
+    if (IR_cluster==0):
+        return getDotCode(getNextIR())
     string ="" 
     for i in range(len(IR_cluster.cluster)):
         string = string + IR_cluster.cluster[i].pointerStatus + '\n'
+        print string
     returnstr =  "digraph G { \n Next [URL=\"http://en.wikipedia.org/wiki/Hello\"] \n" + string + "}"
     print returnstr
     return returnstr
@@ -118,7 +127,10 @@ def getDotCode(IR_cluster):
 
 
 def main():
-    readFile("x=NULL.pointer.log")
+    filename= sys.argv[1]
+    print filename
+    readFile(filename)
+    print "read DONE"
     window = MyDotWindow()
     window.set_dotcode( getDotCode(getNextIR()))
     window.set_title("CSE231")

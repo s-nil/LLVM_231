@@ -1,27 +1,18 @@
-/*
- *
- * Requirements :
- * 	-	Every static analysis must extend the WorkList class.
- * 	-	The LatticeNode structure is used to store the results of the analysis.
- *
- * 	Notice that we assume all static analyses use a function scope, in accordance with the Professor's instructions.
- */
-
 #ifndef POINTER_ANALYSIS
 #define POINTER_ANALYSIS
+#include "WorkList.h"
+#include <map>
+#include <vector>
+#include <cstdlib>
+#include <sstream>
+#include <set>
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/Instruction.h"
 #include "llvm/IR/Constants.h"
 #include "llvm/Support/raw_ostream.h"
 #include "PointerAnalysisFlow.h"
-#include "WorkList.h"
-#include <map>
-#include <vector>
-#include <cstdlib>
-#include <queue>
-#include <sstream>
-#include <set>
+
 
 using namespace llvm;
 using namespace std;

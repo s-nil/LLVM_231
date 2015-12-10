@@ -1,17 +1,8 @@
-/*
-
- * Flow.h
- *
- *  Created on: 2014-05-29
- *      Author: jtestard
- */
-
 #ifndef POINTER_ANALYSIS_FLOW
 #define POINTER_ANALYSIS_FLOW
 #include <string>
 #include <map>
 #include <set>
-#include <algorithm>
 #include <sstream>
 #include "llvm/Support/raw_ostream.h"
 #include "Flow.h"
@@ -19,31 +10,22 @@
 
 using namespace std;
 using namespace llvm;
-/*
- * This class is the FLow class for the pointer analysis.
- * This is a May-Point-To Analysis.
- */
+
 
 class PointerAnalysisFlow: public Flow {
 
 public:
 
-	//The equality operator is used by the worklist algorithm and must be overloaded by the analysis.
+	
 	bool equals(Flow* other);
-
-
 
     string arrowList();
 
-
 	void copy(Flow* rhs);
-
 
 	Flow* join(Flow* other);
 
-
 	PointerAnalysisFlow();
-
 
 	PointerAnalysisFlow(int triPoint);
 
@@ -51,8 +33,8 @@ public:
 
 	~PointerAnalysisFlow();
 
-
 	map<string, set<string> > value;
+	//for test to print value
 	void printValue(map<string, set<string> > value);
 };
 

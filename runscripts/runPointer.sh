@@ -14,14 +14,15 @@ clang -O0 -emit-llvm -c $bench_path/$bench.cpp -o $bench_path/$bench.bc
 llvm-dis $bench_path/$bench.bc
 
 #use 231.so to generate .bc
-echo $OUTPUTLOGS/$bench.pointer.log
-touch $OUTPUTLOGS/$bench.pointer.log
-opt -load $LLVMLIB/CSE231.so -$pass < $bench.bc -analyze >> $OUTPUTLOGS/$bench.pointer.log
+#echo $OUTPUTLOGS/$bench.pointer.log
+mkdir $OUTPUTLOGS/$bench
+#rm $OUTPUTLOGS/$bench/$bench.pointer.log
+opt -load $LLVMLIB/CSE231.so -$pass < $bench.bc -analyze > $OUTPUTLOGS/$bench/$bench.pointer.log
 #cat $OUTPUTLOGS/$bench.pointer.log
 
 #output bc to ll for you check
-opt -load $LLVMLIB/CSE231.so -$pass < $bench.bc > $OUTPUTLOGS/$bench.pointer.bc
-llvm-dis $OUTPUTLOGS/$bench.pointer.bc
+opt -load $LLVMLIB/CSE231.so -$pass < $bench.bc > $OUTPUTLOGS/$bench/$bench.pointer.bc
+llvm-dis $OUTPUTLOGS/$bench/$bench.pointer.bc
 #runthis
 #./runscripts/runPointer.sh P2test/pointerAnalysisSimple
 

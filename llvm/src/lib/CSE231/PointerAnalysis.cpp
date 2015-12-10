@@ -1,21 +1,3 @@
-
-//
-//  WorkListPass.cpp
-//  
-//
-//  Created by Jules Testard on 22/05/2014.
-//
-//
-
-/*
- * Note : use the errs() instead of std::cout in this file to output to the console (if your name is not mike and you don't have a fancy debugger that
- * took hours to install :).
- *
- *
- *
- *
- *
- */
 #include "PointerAnalysis.h"
 /*
  * For basic static analysis, flow is just "assigned to top", which just means the basic string from the Flow general class will be top.
@@ -200,6 +182,7 @@ PointerAnalysisFlow* PointerAnalysis::execute_X_equals_ptrY(PointerAnalysisFlow*
 PointerAnalysisFlow* PointerAnalysis::execute_X_equals_NULL(PointerAnalysisFlow* in, Instruction* instruction) {
 	PointerAnalysisFlow* f = new PointerAnalysisFlow(in);
 	// if C CODE : X = Y+i
+	//it will have 
 	if (isa<GetElementPtrInst>(instruction)) {
 		Value* X = instruction->getNextNode()->getOperand(1);
 		if (X->getType()->isPointerTy() && X->getName() != "") {
@@ -231,7 +214,7 @@ bool PointerAnalysis::madeByLLVM(string name) {
 void PointerAnalysis::print(raw_ostream &OS) {
     //The graph data representationion is now edge-based.
     for (unsigned int i = 0; i < CFGNodes.size() ; i++) {
-        this->JSONNode(OS,this->CFGNodes[i]);
+        this->printHelper(OS,this->CFGNodes[i]);
         if(i+1 < CFGNodes.size()) {
             OS << "\n";
         }
@@ -239,29 +222,28 @@ void PointerAnalysis::print(raw_ostream &OS) {
     }
 }
 
-void PointerAnalysis::JSONEdge(raw_ostream &OS, LatticeEdge* edge) {
-	PointerAnalysisFlow * temp = (PointerAnalysisFlow * )edge->flow;
-    OS << temp->arrowList() << "\n";
 
-}
-
-void PointerAnalysis::JSONNode(raw_ostream &OS, LatticeNode* node) {
+void PointerAnalysis::printHelper(raw_ostream &OS, LatticeNode* node) {
     
 	OS << "representation : " << *(node->inst) << "\n";
 	OS << "#Edge incoming" << "\n";
     for (unsigned int i = 0 ; i < node->incoming.size() ; i++) {
-        this->JSONEdge(OS,node->incoming[i]);
-        if (i+1<node->incoming.size())
-            OS << "\n";
+        //this->JSONEdge(OS,node->incoming[i]);
+		PointerAnalysisFlow * temp = (PointerAnalysisFlow * )node->incoming[i]->flow;
+		OS << temp->arrowList() << "\n";
+    //    if (i+1<node->incoming.size())
+       //     OS << "\n";
 
     }
 	OS << "\n";
 	
  	OS << "#Edge outcoming" << "\n";
     for (unsigned int i = 0 ; i < node->outgoing.size() ; i++) {
-        this->JSONEdge(OS,node->outgoing[i]);
-        if (i+1<node->outgoing.size())
-            OS << "\n";
+      //  this->JSONEdge(OS,node->outgoing[i]);
+		PointerAnalysisFlow * temp = (PointerAnalysisFlow * )node->outgoing[i]->flow;
+		OS<<temp->arrowList()<<"\n";
+      //  if (i+1<node->outgoing.size())
+       //     OS << "\n";
 
     }
 

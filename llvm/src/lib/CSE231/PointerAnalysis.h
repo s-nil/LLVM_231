@@ -32,23 +32,13 @@ class PointerAnalysis : public WorkList {
 public :
 
 	PointerAnalysis(Function &F);
-
-	/*
-	 * This method is called by the run worklist algorithm.
-	 * It has the responsability to figure out what kind of instruction is being used and how to generate the output flow from the input flow for
-	 * that instruction.
-	 * It is expected this function will call other functions created by the subclasses to deal with each type of instruction.
-	 *
-	 * The output is a Flow that is the result of the processing of in with respect to instruction inst.
-	 */
 	Flow* executeFlowFunction(Flow *in, Instruction *inst, int NodeId);
 
 	Flow* initialize();
 
     void print(raw_ostream &OS);
-    void JSONNode(raw_ostream &OS, LatticeNode* node);
-    void JSONEdge(raw_ostream &OS, LatticeEdge* edge);
-    
+    void printHelper(raw_ostream &OS, LatticeNode* node);
+  
 
 protected:
 	PointerAnalysisFlow* execute_X_equals_refY(PointerAnalysisFlow* in, Instruction* inst);

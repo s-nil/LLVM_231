@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-pass="pointerAnalysisOptimization"
+pass="PointerGuardianPass"
 
 bench_path=$1
 

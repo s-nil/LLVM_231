@@ -1,5 +1,5 @@
-#ifndef STATIC_ANALYSIS
-#define STATIC_ANALYSIS
+#ifndef WORKLIST
+#define WORKLIST
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/Instruction.h"

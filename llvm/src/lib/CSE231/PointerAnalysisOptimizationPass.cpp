@@ -12,10 +12,10 @@ using namespace std;
 
 
 namespace {
-  struct PointerAnalysisOptimizationPass : public FunctionPass {
+  struct PointerGuardianPass : public FunctionPass {
     static char ID;
     vector<PointerAnalysis *>pointerAnalyses;
-    PointerAnalysisOptimizationPass() : FunctionPass(ID) {}
+    PointerGuardianPass() : FunctionPass(ID) {}
 
     virtual bool runOnFunction(Function &F) {
     	pointerAnalyses.push_back(new PointerAnalysis(F));
@@ -40,5 +40,5 @@ namespace {
   };
 }
 
-char PointerAnalysisOptimizationPass::ID = 0;
-static RegisterPass<PointerAnalysisOptimizationPass> X("pointerAnalysisOptimization", "Pointer Analysis Optimization Pass", false, false);
+char PointerGuardianPass::ID = 0;
+static RegisterPass<PointerGuardianPass> X("PointerGuardianPass", "PointerGuardian Pass", false, false);

@@ -1,7 +1,5 @@
 #include "WorkList.h"
 
-
-
 void WorkList::CFGmaker(Function &F){
     //DFS clone graph without recursion! yes
     //algorithm is at http://bangbingsyb.blogspot.com/2014/11/leetcode-clone-graph.html
@@ -20,6 +18,8 @@ void WorkList::CFGmaker(Function &F){
     map[instruction] =  first;
     s.push(instruction);
     
+    
+    //make the fist edge for firstNode
     LatticeEdge* firstEdge = new LatticeEdge(*CFGNodes.begin(),*CFGNodes.begin());
    	(*CFGNodes.begin())->incoming.push_back(firstEdge);
    	this->CFGEdges.push_back(firstEdge);
@@ -37,8 +37,8 @@ void WorkList::CFGmaker(Function &F){
         if(isa<BranchInst>(currentInst)) {
             BranchInst * branchInst = dyn_cast<BranchInst>(currentInst);
             for ( unsigned int i = 0 ; i < branchInst->getNumSuccessors() ; i++) {
-            BasicBlock * bb = branchInst->getSuccessor(i); //Get successor basic block
-            Instruction * nextInst = &*(bb->begin());//bb->getFirstNonPHIOrDbgOrLifetime(); // Gets the first legitimate instruction.
+            BasicBlock * bb = branchInst->getSuccessor(i);
+            Instruction * nextInst = &*(bb->begin());
             if(nextInst != NULL) childsInst.push_back(nextInst);
             }
         //not branch
@@ -78,7 +78,7 @@ void WorkList::CFGmaker(Function &F){
 
 
 void WorkList::runWorklist() {
-	
+	//same in the slide
 	queue<LatticeNode*> worklist;
 
 	for (unsigned int i = 0; i < CFGEdges.size(); i++) {
@@ -93,13 +93,13 @@ void WorkList::runWorklist() {
 	while(!worklist.empty()){
 		
 		LatticeNode* current = worklist.front();
-		errs()<<"star working on " <<*current->inst<<"\n";
+		errs()<<"----------------> start working on " <<*current->inst<<" <------\n";
 
 		vector<Flow*> inputFlows;
 		for (unsigned int i = 0 ; i < current->incoming.size() ; i++) {
 			inputFlows.push_back(current->incoming[i]->flow);
 		}
-
+        
 		
 		Flow* in = initialize();
 		in->copy(inputFlows[0]);
@@ -109,11 +109,11 @@ void WorkList::runWorklist() {
 			in = f;
 		}
 
-	
+	    //executeFlowFunction which is override by subclass
 		Flow* out = executeFlowFunction(in,	current->inst,current->index);	
 
 
-		//This will executed the flow function
+		
 		for(unsigned int i = 0 ; i < current->outgoing.size(); i++) {
 	
 			Flow* new_out = out->join(current->outgoing[i]->flow);

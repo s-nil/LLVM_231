@@ -36,6 +36,10 @@ public:
 	bool equals(Flow* other);
 
 	Flow* join(Flow* other);
+	
+	void copy(Flow* rhs) ;
+
+
 };
 
 #endif

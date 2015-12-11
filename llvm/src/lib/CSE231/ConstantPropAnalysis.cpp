@@ -42,10 +42,34 @@ Flow* ConstantPropAnalysis::executeFlowFunction(Flow *in, Instruction *inst, int
 		output = runPhiInst(inFlow, inst);
 		break;
 
-
-	case Instruction::Alloca:
-	case Instruction::Load:
 	case Instruction::Store:
+		//ConstantPropAnalysisFlow * f = new ConstantPropAnalysisFlow();
+		errs() <<"in store"<< '\n';
+		if (inst->getOperand(1)->getName()!="") {
+			Value * value = inst->getOperand(0);
+			if (dyn_cast<Constant>(value)){
+			ConstantInt *cI = dyn_cast<ConstantInt>(value);
+			int x =(int) cI->getZExtValue();
+			errs()<<"find variable !!!!!!!!!!!!!!!!!!"<<inst->getOperand(1)->getName()<<x<<"\n";
+			ConstantPropAnalysisFlow * f = new ConstantPropAnalysisFlow(0);
+			f->triPoint = 0;
+			errs()<<f->value.size()<<"\n";
+			f->value[inst->getOperand(1)->getName()] = x;
+			//errs()<<f->value.size()<<"\n";
+			//errs()<<"Tripoint inFlow"<< inFlow->triPoint<<" f" << f->triPoint<<"\n";
+		//	inFlow->triPoint=0;
+			//ConstantPropAnalysisFlow* tmp =		static_cast<ConstantPropAnalysisFlow*>(f->join(inFlow));
+			//errs()<<tmp->value.size()<<"\n";
+			output = f;
+			errs()<<"output size"<<output->value.size()<<"\n";
+			
+			}
+			
+		}
+		break;
+	//case Instruction::Alloca:
+	//case Instruction::Load:
+	//case Instruction::Store:
 	case Instruction::GetElementPtr:
 	case Instruction::Fence:
 	case Instruction::AtomicCmpXchg:

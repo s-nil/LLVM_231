@@ -62,6 +62,11 @@ string ConstantPropAnalysisFlow::arrowList() {
 }
 
 
+void ConstantPropAnalysisFlow::copy(Flow* rhs) {
+	ConstantPropAnalysisFlow* f = static_cast<ConstantPropAnalysisFlow*>(rhs);
+	this->triPoint = f->triPoint;
+	this->value = f->value;
+}
 // TOP is empty set   BOTTOM is full set
 Flow* ConstantPropAnalysisFlow::join(Flow* otherSuper) {
 

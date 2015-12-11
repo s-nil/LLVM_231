@@ -26,39 +26,16 @@ declare i32 @__cxa_atexit(void (i8*)*, i8*, i8*) #1
 define i32 @main() #2 {
 entry:
   %retval = alloca i32, align 4
-  %x = alloca float, align 4
-  %y = alloca float, align 4
+  %x = alloca i32, align 4
+  %y = alloca i32, align 4
   %z = alloca i32, align 4
-  %z_ = alloca float, align 4
-  %a1 = alloca i16, align 2
-  %a2 = alloca i16, align 2
   store i32 0, i32* %retval
-  store float 0x400921CAC0000000, float* %x, align 4
-  store float 0x4022C28F60000000, float* %y, align 4
-  %0 = load float* %x, align 4
-  %conv = fptosi float %0 to i32
-  store i32 %conv, i32* %z, align 4
-  %1 = load float* %y, align 4
-  %conv1 = fptosi float %1 to i32
-  store i32 %conv1, i32* %z, align 4
-  %2 = load i32* %z, align 4
-  %conv2 = sitofp i32 %2 to float
-  %3 = load float* %y, align 4
-  %add = fadd float %conv2, %3
-  store float %add, float* %z_, align 4
-  %4 = load float* %y, align 4
-  %add3 = fadd float %4, 9.000000e+00
-  store float %add3, float* %z_, align 4
-  %5 = load float* %x, align 4
-  %add4 = fadd float %5, 9.000000e+00
-  %conv5 = fptosi float %add4 to i32
-  store i32 %conv5, i32* %z, align 4
-  store i16 1, i16* %a1, align 2
-  %6 = load i16* %a1, align 2
-  %conv6 = zext i16 %6 to i32
-  %shl = shl i32 %conv6, 3
-  %conv7 = trunc i32 %shl to i16
-  store i16 %conv7, i16* %a2, align 2
+  store i32 3, i32* %x, align 4
+  store i32 5, i32* %y, align 4
+  %0 = load i32* %x, align 4
+  store i32 %0, i32* %z, align 4
+  %1 = load i32* %y, align 4
+  store i32 %1, i32* %z, align 4
   ret i32 0
 }
 

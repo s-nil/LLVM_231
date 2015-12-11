@@ -45,7 +45,7 @@ string ConstantPropAnalysisFlow::arrowList() {
 	//ss<<"in arrowList";
 	map<string, set<string> >::const_iterator it = this->value.begin();
     string first = it->first;
-	float second = it->second;
+	float second =it->second;
 	if (its != it->second.end()) {
         ss << first << "->"<< *its << "\n";
         its++;

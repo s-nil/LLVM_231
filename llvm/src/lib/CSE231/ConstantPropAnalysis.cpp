@@ -58,9 +58,9 @@ Flow* ConstantPropAnalysis::executeFlowFunction(Flow *in, Instruction *inst, int
 			//errs()<<f->value.size()<<"\n";
 			//errs()<<"Tripoint inFlow"<< inFlow->triPoint<<" f" << f->triPoint<<"\n";
 		//	inFlow->triPoint=0;
-			//ConstantPropAnalysisFlow* tmp =		static_cast<ConstantPropAnalysisFlow*>(f->join(inFlow));
+			ConstantPropAnalysisFlow* tmp =		static_cast<ConstantPropAnalysisFlow*>(f->join(inFlow));
 			//errs()<<tmp->value.size()<<"\n";
-			output = f;
+			output = tmp;
 			errs()<<"output size"<<output->value.size()<<"\n";
 			
 			}

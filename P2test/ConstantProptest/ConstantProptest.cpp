@@ -5,13 +5,14 @@ int main()
   int  x ;
   int y ;
    x= 3;
+  //int z;
  y =5;
-int z;
+//int z;
  // int z;
  // float z_;  
 
-  z = x;
-  z = y;
+ // z = x;
+  //z = y;
  // z_ = z + y;
  // z_ = y + 9;
  // z = x + 9;

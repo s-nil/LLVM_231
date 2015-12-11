@@ -14,12 +14,10 @@ entry:
   %f = alloca i32, align 4
   %g = alloca i32, align 4
   %h = alloca i32, align 4
-  %i = alloca i32, align 4
-  %j = alloca i32, align 4
   store i32 0, i32* %retval
   store i32 5, i32* %a, align 4
   %0 = load i32* %a, align 4
-  %add = add nsw i32 100, %0
+  %add = add nsw i32 %0, 50
   store i32 %add, i32* %b, align 4
   %1 = load i32* %b, align 4
   %mul = mul nsw i32 %1, 50
@@ -31,24 +29,16 @@ entry:
   %rem = srem i32 %3, 25
   store i32 %rem, i32* %e, align 4
   %4 = load i32* %b, align 4
-  %sub = sub nsw i32 %4, 100
+  %sub = sub nsw i32 %4, 50
   store i32 %sub, i32* %f, align 4
   %5 = load i32* %b, align 4
-  %shr = ashr i32 %5, 2
+  %shr = ashr i32 %5, 1
   store i32 %shr, i32* %g, align 4
   %6 = load i32* %b, align 4
-  %shl = shl i32 %6, 2
+  %shl = shl i32 %6, 1
   store i32 %shl, i32* %h, align 4
-  %7 = load i32* %b, align 4
-  %8 = load i32* %a, align 4
-  %and = and i32 %7, %8
-  store i32 %and, i32* %i, align 4
-  %9 = load i32* %b, align 4
-  %10 = load i32* %a, align 4
-  %or = or i32 %9, %10
-  store i32 %or, i32* %j, align 4
-  %11 = load i32* %a, align 4
-  ret i32 %11
+  %7 = load i32* %a, align 4
+  ret i32 %7
 }
 
 attributes #0 = { nounwind uwtable "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }

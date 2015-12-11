@@ -29,6 +29,9 @@ public:
 	Flow* executeFlowFunction(Flow *in, Instruction *inst, int NodeId);
 
 	Flow* initialize();
+void print(raw_ostream &OS);
+	
+	void printHelper(raw_ostream &OS, LatticeNode* node);
 
 protected:
 

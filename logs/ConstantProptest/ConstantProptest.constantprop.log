@@ -100,14 +100,6 @@ BOTTOM
 BOTTOM
 
 
-representation :   %z = alloca i32, align 4
-#Edge incoming
-BOTTOM
-
-#Edge outcoming
-BOTTOM
-
-
 representation :   store i32 0, i32* %retval
 #Edge incoming
 BOTTOM
@@ -123,66 +115,34 @@ retval->0
 
 
 #Edge outcoming
+retval->0
 x->3
 
 
 
 representation :   store i32 5, i32* %y, align 4
 #Edge incoming
+retval->0
 x->3
 
 
 #Edge outcoming
-y->5
-
-
-
-representation :   %0 = load i32* %x, align 4
-#Edge incoming
-y->5
-
-
-#Edge outcoming
-y->5
-
-
-
-representation :   store i32 %0, i32* %z, align 4
-#Edge incoming
-y->5
-
-
-#Edge outcoming
-y->5
-
-
-
-representation :   %1 = load i32* %y, align 4
-#Edge incoming
-y->5
-
-
-#Edge outcoming
-y->5
-
-
-
-representation :   store i32 %1, i32* %z, align 4
-#Edge incoming
-y->5
-
-
-#Edge outcoming
+retval->0
+x->3
 y->5
 
 
 
 representation :   ret i32 0
 #Edge incoming
+retval->0
+x->3
 y->5
 
 
 #Edge outcoming
+retval->0
+x->3
 y->5
 
 
@@ -192,23 +152,24 @@ entry:
   %retval = alloca i32, align 4
   %x = alloca i32, align 4
   %y = alloca i32, align 4
-  %z = alloca i32, align 4
   store i32 0, i32* %retval
   store i32 3, i32* %x, align 4
   store i32 5, i32* %y, align 4
-  %0 = load i32* %x, align 4
-  store i32 %0, i32* %z, align 4
-  %1 = load i32* %y, align 4
-  store i32 %1, i32* %z, align 4
   ret i32 0
 
 #Edge incoming
+retval->0
+x->3
 y->5
 
+retval->0
+x->3
 y->5
 
 
 #Edge outcoming
+retval->0
+x->3
 y->5
 
 
@@ -276,14 +237,6 @@ BOTTOM
 BOTTOM
 
 
-representation :   %z = alloca i32, align 4
-#Edge incoming
-BOTTOM
-
-#Edge outcoming
-BOTTOM
-
-
 representation :   store i32 0, i32* %retval
 #Edge incoming
 BOTTOM
@@ -299,66 +252,34 @@ retval->0
 
 
 #Edge outcoming
+retval->0
 x->3
 
 
 
 representation :   store i32 5, i32* %y, align 4
 #Edge incoming
+retval->0
 x->3
 
 
 #Edge outcoming
-y->5
-
-
-
-representation :   %0 = load i32* %x, align 4
-#Edge incoming
-y->5
-
-
-#Edge outcoming
-y->5
-
-
-
-representation :   store i32 %0, i32* %z, align 4
-#Edge incoming
-y->5
-
-
-#Edge outcoming
-y->5
-
-
-
-representation :   %1 = load i32* %y, align 4
-#Edge incoming
-y->5
-
-
-#Edge outcoming
-y->5
-
-
-
-representation :   store i32 %1, i32* %z, align 4
-#Edge incoming
-y->5
-
-
-#Edge outcoming
+retval->0
+x->3
 y->5
 
 
 
 representation :   ret i32 0
 #Edge incoming
+retval->0
+x->3
 y->5
 
 
 #Edge outcoming
+retval->0
+x->3
 y->5
 
 
@@ -368,23 +289,24 @@ entry:
   %retval = alloca i32, align 4
   %x = alloca i32, align 4
   %y = alloca i32, align 4
-  %z = alloca i32, align 4
   store i32 0, i32* %retval
   store i32 3, i32* %x, align 4
   store i32 5, i32* %y, align 4
-  %0 = load i32* %x, align 4
-  store i32 %0, i32* %z, align 4
-  %1 = load i32* %y, align 4
-  store i32 %1, i32* %z, align 4
   ret i32 0
 
 #Edge incoming
+retval->0
+x->3
 y->5
 
+retval->0
+x->3
 y->5
 
 
 #Edge outcoming
+retval->0
+x->3
 y->5
 
 

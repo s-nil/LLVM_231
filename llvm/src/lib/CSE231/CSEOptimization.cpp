@@ -11,10 +11,10 @@ using namespace llvm;
 using namespace std;
 
 namespace {
-  struct CSEAnalysisOptimizationPass : public FunctionPass {
+  struct CSEAnalysisGuardianPass : public FunctionPass {
     static char ID;
     vector<CSEAnalysis *>CSEAnalyses;
-    CSEAnalysisOptimizationPass() : FunctionPass(ID) {}
+    CSEAnalysisGuardianPass() : FunctionPass(ID) {}
 
     virtual bool runOnFunction(Function &F) {
     	CSEAnalyses.push_back(new CSEAnalysis(F));
@@ -25,14 +25,15 @@ namespace {
 
     	OS << "Available Expression AnalysisS: \n";
     	for (unsigned int i = 0 ; i < CSEAnalyses.size() ; i++){
-
-    		CSEAnalyses[i]->runWorklist();
-        	OS << "\nPrint CFG : " << "\n";
+            CSEAnalyses[i]->runWorklist();
+    		CSEAnalyses[i]->print(OS);
+        
+        	OS << "\n";
     	}
 
   	}
   };
 }
 
-char CSEAnalysisOptimizationPass::ID = 0;
-static RegisterPass<CSEAnalysisOptimizationPass> X("CSEAnalysisOptimization", "Available Expression Analysis Optimization Pass", false, false);
+char CSEAnalysisGuardianPass::ID = 0;
+static RegisterPass<CSEAnalysisGuardianPass> X("CSEAnalysisGuardian", "Available Expression Analysis Guardian Pass", false, false);

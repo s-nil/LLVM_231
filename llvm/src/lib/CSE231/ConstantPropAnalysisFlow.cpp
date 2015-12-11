@@ -81,14 +81,16 @@ Flow* ConstantPropAnalysisFlow::join(Flow* otherSuper) {
 
 	if (this->triPoint == BOTTOM) {
 		ConstantPropAnalysisFlow* f = new ConstantPropAnalysisFlow();
-		f->value = other->value;
-		f->triPoint = other->triPoint;
+		//f->value = other->value;
+		//f->triPoint = other->triPoint;
+		f->copy(other);
 		return f;
 	}
 	if (other->triPoint == BOTTOM) {
 		ConstantPropAnalysisFlow* f = new ConstantPropAnalysisFlow();
-		f->value = this->value;
-		f->triPoint = this->triPoint;
+	//	f->value = this->value;
+	//	f->triPoint = this->triPoint;
+		f->copy(this);
 		return f;
 	}
 

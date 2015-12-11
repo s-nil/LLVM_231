@@ -31,6 +31,10 @@ public:
 	Flow* join(Flow* other);
 
 	map<string, string > value;
+	
+	void copy(Flow* rhs);
+	string arrowList();
+
 
 };
 

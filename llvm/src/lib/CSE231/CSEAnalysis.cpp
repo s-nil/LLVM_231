@@ -83,6 +83,40 @@ Flow * CSEAnalysis::initialize() {
 	return new CSEAnalysisFlow(BOTTOM);
 }
 
+void CSEAnalysis::print(raw_ostream &OS) {
+
+    for (unsigned int i = 0; i < CFGNodes.size() ; i++) {
+        this->printHelper(OS,this->CFGNodes[i]);
+        if(i+1 < CFGNodes.size()) {
+            OS << "\n";
+        }
+            OS << "\n";
+    }
+}
+
+
+void CSEAnalysis::printHelper(raw_ostream &OS, LatticeNode* node) {
+    
+	OS << "representation : " << *(node->inst) << "\n";
+	OS << "#Edge incoming" << "\n";
+    for (unsigned int i = 0 ; i < node->incoming.size() ; i++) {
+ 
+		CSEAnalysisFlow * temp = (CSEAnalysisFlow * )node->incoming[i]->flow;
+		OS << temp->arrowList() << "\n";
+
+    }
+	OS << "\n";
+	
+ 	OS << "#Edge outcoming" << "\n";
+    for (unsigned int i = 0 ; i < node->outgoing.size() ; i++) {
+
+		CSEAnalysisFlow * temp = (CSEAnalysisFlow * )node->outgoing[i]->flow;
+		OS<<temp->arrowList()<<"\n";
+ 
+    }
+
+}
+
 CSEAnalysisFlow* CSEAnalysis::runUnaryInst(
 		CSEAnalysisFlow* in, Instruction* instruction,
 		unsigned opcode) {

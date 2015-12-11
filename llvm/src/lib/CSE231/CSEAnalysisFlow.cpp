@@ -35,7 +35,36 @@ bool CSEAnalysisFlow::equals(Flow* otherSuper) {
 
 	return true;
 }
+string CSEAnalysisFlow::arrowList() {
+	if (value.size()==0)
+		return std::string ( ( this->triPoint ==BOTTOM ? "BOTTOM" : "TOP"));
+	//Value has something inside
+	stringstream ss;
+	//ss<<"in arrowList";
+	map<string, string >::const_iterator it = this->value.begin();
+    string first = it->first;
+	string second =it->second;
+	
+        ss << first << "->"<< second<< "\n";
+  
+	//errs() << "number of keys in set : " << it->second.size() << "\n";
+ 	if (it != this->value.end())
+ 		it++;
+	for (; it != this->value.end() ; it++) {
+        string first = it->first;
+		second = it->second;
+        ss << first << "->"<< second << "\n";
+	}
+	ss << "";
+	//ss<<"out arrowList";
+	return ss.str();
+}
 
+void CSEAnalysisFlow::copy(Flow* rhs) {
+	CSEAnalysisFlow* f = static_cast<CSEAnalysisFlow*>(rhs);
+	this->triPoint = f->triPoint;
+	this->value = f->value;
+}
 Flow* CSEAnalysisFlow::join(Flow* otherSuper) {
 
 	CSEAnalysisFlow* other =

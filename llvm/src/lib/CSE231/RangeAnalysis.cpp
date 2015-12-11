@@ -21,7 +21,7 @@ Flow* RangeAnalysis::executeFlowFunction(Flow *in, Instruction *inst, int NodeId
 	RAFlow* inFlow = static_cast<RAFlow*>(in);
 	RAFlow* output;
 	int count;
-	//If we have seen this a few times, change ALL VARIABLES that are changing to TOP
+	//add termination for loops
 	if (nodeCount.find(NodeId) != nodeCount.end())
 	{
 		count = nodeCount[NodeId].counter;
@@ -29,10 +29,6 @@ Flow* RangeAnalysis::executeFlowFunction(Flow *in, Instruction *inst, int NodeId
 		{
 			RAFlow* f = new RAFlow(inFlow);
 			RAFlow* fnew = new RAFlow();
-			/*RAFlow* ftmp = static_cast<RAFlow*>(fnew->join(f));
-            delete fnew;
-            delete f;
-            f = ftmp;*/
 			f = static_cast<RAFlow*>(fnew->join(f));
 			RAFlow* tmp = nodeCount[NodeId].nodeSet;
 			for (map<string, Range>::iterator itr = tmp->value.begin(); itr!=tmp->value.end(); itr++)
@@ -58,10 +54,6 @@ Flow* RangeAnalysis::executeFlowFunction(Flow *in, Instruction *inst, int NodeId
 	else{
 		RAFlow* f = new RAFlow(inFlow);
 		RAFlow* fnew = new RAFlow();
-		/*RAFlow* ftmp = static_cast<RAFlow*>(fnew->join(f));
-        delete fnew;
-        delete f;
-        f = ftmp;*/
 		f = static_cast<RAFlow*>(fnew->join(f));
 
 		// add this node
@@ -116,7 +108,6 @@ Flow* RangeAnalysis::executeFlowFunction(Flow *in, Instruction *inst, int NodeId
 			output = runRtnInst(inFlow, inst);
 			break;
 		default:
-		    //output = runCastInst(inFlow, inst);
 			output = new RAFlow(inFlow);
 			break;
 	}	
@@ -270,11 +261,6 @@ RAFlow* RangeAnalysis::runOpInst(RAFlow* in, Instruction* instruction, unsigned 
 	value[inst->getName()] = rtnRange;
 	//value[inst->getName()] = rtnRange;
 	fnew->value = value;
-	/*RAFlow* ftmp = static_cast<RAFlow*>(fnew->join(f));
-    delete fnew;
-    delete f;
-    f = ftmp;*/
-    //f->value["op"] = rtnRange;
 	f = static_cast<RAFlow*>(fnew->join(f));
 	return f;
 }
@@ -308,10 +294,6 @@ RAFlow* RangeAnalysis::runStoreInst(RAFlow* in, Instruction* instruction) {
 	value[right->getName()] = rtnRange;
 	RAFlow* fnew = new RAFlow(0);
 	fnew->value = value;
-	/*RAFlow* ftmp = static_cast<RAFlow*>(fnew->join(f));
-	delete fnew;
-	delete f;
-	f = ftmp;*/
 	f = static_cast<RAFlow*>(fnew->join(f));
 	//errs() << "runStoreInst:" << "[ " << rtnRange.lower << ", " << rtnRange.upper << " ]" << "\n";
 	return f;
@@ -342,10 +324,6 @@ RAFlow* RangeAnalysis::runLoadInst(RAFlow* in, Instruction* instruction) {
 	//errs() << "runCastInst:" << "[ " << rtnRange.lower << ", " << rtnRange.upper << " ]" << "\n";
 	RAFlow* fnew = new RAFlow(0);
 	fnew->value = value;
-	/*RAFlow* ftmp = static_cast<RAFlow*>(fnew->join(f));
-    delete fnew;
-    delete f;
-    f = ftmp;*/
 	f = static_cast<RAFlow*>(fnew->join(f));
 	return f;
 }
@@ -424,10 +402,6 @@ RAFlow* RangeAnalysis::runCastInst(RAFlow* in, Instruction* instruction) {
 	//errs() << "runCastInst:" << "[ " << rtnRange.lower << ", " << rtnRange.upper << " ]" << "\n";
 	RAFlow* fnew = new RAFlow(0);
 	fnew->value = value;
-	/*RAFlow* ftmp = static_cast<RAFlow*>(fnew->join(f));
-    delete fnew;
-    delete f;
-    f = ftmp;*/
 	f = static_cast<RAFlow*>(fnew->join(f));
 	return f;
 }
@@ -462,10 +436,6 @@ RAFlow* RangeAnalysis::runPhiInst(RAFlow* in, Instruction* instruction) {
 	}
 	value[inst->getName()] = maxRange;
 	fnew->value = value;
-	/*RAFlow* ftmp = static_cast<RAFlow*>(fnew->join(f));
-    delete fnew;
-    delete f;
-    f = ftmp;*/
 	f = static_cast<RAFlow*>(fnew->join(f));
 	return f;
 }
@@ -476,7 +446,7 @@ Range RangeAnalysis::getRange(Range lRange, Range rRange, unsigned opcode){
 
 	// Check if input elements have been analyzed
 	if (rRange.undefined || lRange.undefined || rRange.top || lRange.top){
-		rtnRange.top = true;//Oh dearrrrrrrr :( This guy is not gonna be helpful anymore :(
+		rtnRange.top = true;
 		rtnRange.bottom = false;
 		rtnRange.upper = 0;
 		rtnRange.lower = 0;
@@ -591,7 +561,6 @@ void RangeAnalysis::printHelper(raw_ostream &OS, LatticeNode* node) {
 		RAFlow * tmp = (RAFlow*)node->incoming[i]->flow;
 		OS << tmp->toString() << "\n";
     }
-	//OS << "\n";
  	OS << "#Edge outcoming" << "\n";
     for (unsigned int i = 0 ; i < node->outgoing.size() ; i++) {
 		RAFlow * tmp = (RAFlow*)node->outgoing[i]->flow;

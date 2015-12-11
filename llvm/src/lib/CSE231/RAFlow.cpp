@@ -95,11 +95,9 @@ Flow* RAFlow::join(Flow* input) {
 	//errs() << inputf->value.size() << "\n";
 	for (map<string, Range>::iterator it = this->value.begin(); it != this->value.end(); it++) {
 		if (f->value.find(it->first) == f->value.end()) {
-			//errs() << "New key\n";
 			f->value[it->first] = it->second;
 		} 
 		else {
-			//errs() << "Existing key\n";
 			Range inputRange = inputf->value.find(it->first)->second;
 			Range thisRange = this->value.find(it->first)->second;
 			Range joinedRange = JoinRange((const Range*) &inputRange,(const Range*) &thisRange);
@@ -127,5 +125,4 @@ string RAFlow::toString() {
 		ss << "}";
 	}
 	return  ss.str();
-
 }

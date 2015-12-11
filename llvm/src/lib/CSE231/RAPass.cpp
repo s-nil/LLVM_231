@@ -26,8 +26,6 @@ namespace {
             OS << "Function Name:" << RangeAnalyses[i]->functionName << "\n";
             RangeAnalyses[i]->runWorklist();
             RangeAnalyses[i]->print(OS);
-            //OS << "\nPrint CFG (with flow) : " << "\n";
-            //RangeAnalyses[i]->JSONCFG(OS);
             OS << "\n";
         }
     }

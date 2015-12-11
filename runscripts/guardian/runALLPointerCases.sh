@@ -5,3 +5,4 @@ ${CSE231ROOT}/runscripts/guardian/runPointer.sh ${CSE231ROOT}/P2test/pointerAnal
 ${CSE231ROOT}/runscripts/guardian/runPointer.sh ${CSE231ROOT}/P2test/pointerAnalysisSimple/x=y
 ${CSE231ROOT}/runscripts/guardian/runPointer.sh ${CSE231ROOT}/P2test/pointerAnalysisSimple/x=\\*y
 ${CSE231ROOT}/runscripts/guardian/runPointer.sh ${CSE231ROOT}/P2test/pointerAnalysisSimple/x=\&y
+${CSE231ROOT}/runscripts/guardian/runPointer.sh ${CSE231ROOT}/P2test/pointerAnalysisSimple/x=y+cNono

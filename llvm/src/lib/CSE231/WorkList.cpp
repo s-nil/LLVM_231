@@ -122,6 +122,7 @@ void WorkList::runWorklist() {
 			if (!(new_out->equals(current->outgoing[i]->flow))){
 				errs()<< current->index << "flow was" << current->outgoing[i]->flow->triPoint<< "change to ===> " << " new_out: "<<new_out->triPoint<<"\n";
 				current->outgoing[i]->flow->copy(new_out);
+                errs()<<"In workList current is now"<<current->outgoing[i]->flow->triPoint;
 				worklist.push(current->outgoing[i]->dst);
 			}
 		}

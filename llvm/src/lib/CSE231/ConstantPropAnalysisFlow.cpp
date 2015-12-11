@@ -4,10 +4,13 @@
 	
 ConstantPropAnalysisFlow::ConstantPropAnalysisFlow(): Flow(){}
 	
-ConstantPropAnalysisFlow::ConstantPropAnalysisFlow(int triPoint): Flow(triPoint){}
+ConstantPropAnalysisFlow::ConstantPropAnalysisFlow(int triPoint) {
+	this->triPoint = triPoint;
+}
 	
-ConstantPropAnalysisFlow::ConstantPropAnalysisFlow(ConstantPropAnalysisFlow *flow): Flow(flow->triPoint) {
+ConstantPropAnalysisFlow::ConstantPropAnalysisFlow(ConstantPropAnalysisFlow *flow) {
 	this->value = flow->value;
+	this->triPoint= flow->triPoint;
 }
 
 ConstantPropAnalysisFlow::~ConstantPropAnalysisFlow(){}	
@@ -37,7 +40,7 @@ bool ConstantPropAnalysisFlow::equals(Flow* otherSuper) {
 }
 
 string ConstantPropAnalysisFlow::arrowList() {
-	if (value.size()==0)
+	if (value.size()==0) 
 		return std::string ( ( this->triPoint ==BOTTOM ? "BOTTOM" : "TOP"));
 	//Value has something inside
 	stringstream ss;
@@ -61,32 +64,48 @@ string ConstantPropAnalysisFlow::arrowList() {
 	return ss.str();
 }
 
+void ConstantPropAnalysisFlow::copy(Flow* rhs) {
+	ConstantPropAnalysisFlow* f = static_cast<ConstantPropAnalysisFlow*>(rhs);
+	this->triPoint = f->triPoint;
+	this->value = f->value;
+}
 
 // TOP is empty set   BOTTOM is full set
 Flow* ConstantPropAnalysisFlow::join(Flow* otherSuper) {
-
+	//errs()<<"Constant Pro JOIN is called!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<"\n";
 	ConstantPropAnalysisFlow* other =
 			static_cast<ConstantPropAnalysisFlow*>(otherSuper);
 
-	if (this->triPoint == TOP || other->triPoint == TOP)
+			errs()<<"in join"<<this->triPoint<<"other "<<other->triPoint<<"\n";
+	if (this->triPoint == TOP || other->triPoint == TOP) {
+			
+		errs() <<"one is top"<<"\n";
 		return new ConstantPropAnalysisFlow(TOP);
+	}
+	
 
-	if (this->triPoint == BOTTOM && other->triPoint == BOTTOM)
+	if (this->triPoint == BOTTOM && other->triPoint == BOTTOM) {
+		errs() <<"both bottom"<<"\n";
 		return new ConstantPropAnalysisFlow(BOTTOM);
+}
 
 	if (this->triPoint == BOTTOM) {
+		errs() <<"this BOTTOM" <<"OTHER IS NOT"<<"\n";
 		ConstantPropAnalysisFlow* f = new ConstantPropAnalysisFlow();
 		f->value = other->value;
 		f->triPoint = other->triPoint;
 		return f;
 	}
 	if (other->triPoint == BOTTOM) {
+		errs() <<"other BOTTOM" <<"this is not"<<"\n";
 		ConstantPropAnalysisFlow* f = new ConstantPropAnalysisFlow();
 		f->value = this->value;
 		f->triPoint = this->triPoint;
+		errs()<<"return f triPoint is"<<f->triPoint<< "size" << value.size()<<"\n";
 		return f;
 	}
 
+errs()<<"I am here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<"\n";
 	ConstantPropAnalysisFlow* f = new ConstantPropAnalysisFlow();
   // if the two set are both not BOTTOM or TOP, join them
 	for (map<string, float>::iterator it = this->value.begin();

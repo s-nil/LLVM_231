@@ -25,6 +25,8 @@ public:
 	CSEAnalysisFlow(CSEAnalysisFlow* flow);
 
 	~CSEAnalysisFlow();
+	
+	string arrowList();
 
 	bool equals(Flow* other);
 

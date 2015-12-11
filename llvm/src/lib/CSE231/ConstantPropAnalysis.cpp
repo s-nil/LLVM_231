@@ -1,8 +1,7 @@
 #include "ConstantPropAnalysis.h"
 
-#define TOP 2
-#define BOTTOM 1 
 Flow* ConstantPropAnalysis::executeFlowFunction(Flow *in, Instruction *inst, int NodeId){
+	errs() <<"executeFlowFunction"<< '\n';
 	ConstantPropAnalysisFlow* inFlow =
 			static_cast<ConstantPropAnalysisFlow*>(in);
 	ConstantPropAnalysisFlow * output;
@@ -17,6 +16,7 @@ Flow* ConstantPropAnalysis::executeFlowFunction(Flow *in, Instruction *inst, int
 	case Instruction::Shl:
 	case Instruction::LShr:
 	case Instruction::AShr:
+	    errs() <<"executeFlowFunction1"<< '\n';
 		output = runOpInst(inFlow, inst, inst->getOpcode());
 		break;
 	case Instruction::FAdd:
@@ -24,6 +24,7 @@ Flow* ConstantPropAnalysis::executeFlowFunction(Flow *in, Instruction *inst, int
 	case Instruction::FMul:
 	case Instruction::FDiv:
 	case Instruction::FRem:
+	    errs() <<"executeFlowFunction2"<< '\n';
 		output = runFOpInst(inFlow, inst, inst->getOpcode());
 		break;
 
@@ -36,16 +37,51 @@ Flow* ConstantPropAnalysis::executeFlowFunction(Flow *in, Instruction *inst, int
 	case Instruction::SIToFP:
 	case Instruction::FPTrunc:
 	case Instruction::FPExt:
+	    errs() <<"executeFlowFunction3"<< '\n';
 		output = runCastInst(inFlow, inst);
 		break;
 	case Instruction::PHI:
+	    errs() <<"executeFlowFunction4"<< '\n';
 		output = runPhiInst(inFlow, inst);
 		break;
 
 
-	case Instruction::Alloca:
-	case Instruction::Load:
 	case Instruction::Store:
+		//ConstantPropAnalysisFlow * f = new ConstantPropAnalysisFlow();
+		errs() <<"in store"<< '\n';
+		if (inst->getOperand(1)->getName()!="") {
+			Value * value = inst->getOperand(0);
+			if (dyn_cast<Constant>(value)){
+			ConstantInt *cI = dyn_cast<ConstantInt>(value);
+			int x =(int) cI->getZExtValue();
+			errs()<<"find variable !!!!!!!!!!!!!!!!!!"<<inst->getOperand(1)->getName()<<x<<"\n";
+			ConstantPropAnalysisFlow * f = new ConstantPropAnalysisFlow(0);
+			f->triPoint = 0;
+			errs()<<f->value.size()<<"\n";
+			f->value[inst->getOperand(1)->getName()] = x;
+			//errs()<<f->value.size()<<"\n";
+			//errs()<<"Tripoint inFlow"<< inFlow->triPoint<<" f" << f->triPoint<<"\n";
+		//	inFlow->triPoint=0;
+			//ConstantPropAnalysisFlow* tmp =		static_cast<ConstantPropAnalysisFlow*>(f->join(inFlow));
+			//errs()<<tmp->value.size()<<"\n";
+			output = f;
+			errs()<<"output size"<<output->value.size()<<"\n";
+			
+			}
+			
+		}
+		
+	//	ConstantPropAnalysisFlow* tmp =
+					//	static_cast<ConstantPropAnalysisFlow*>(inFlow->join(f));
+		//output= new ConstantPropAnalysisFlow(inFlow);
+		errs() <<"in store break"<< '\n';
+		break;
+		
+		
+		
+	//case Instruction::Alloca:
+	case Instruction::Load:
+	
 	case Instruction::GetElementPtr:
 	case Instruction::Fence:
 	case Instruction::AtomicCmpXchg:
@@ -53,6 +89,7 @@ Flow* ConstantPropAnalysis::executeFlowFunction(Flow *in, Instruction *inst, int
 	case Instruction::PtrToInt:
 	case Instruction::IntToPtr:
 		//pointer     return top
+		errs() <<"executeFlowFunction5"<< '\n';
 		output = returnTop();
 		break;
 
@@ -77,7 +114,7 @@ Flow * ConstantPropAnalysis::initialize() {
 
 ConstantPropAnalysisFlow* ConstantPropAnalysis::runCastInst(
 		ConstantPropAnalysisFlow* in, Instruction* instruction) {
-
+      errs()<< "Hello *ConstantPropAnalysis::runFCASTInst" << '\n';
 	ConstantPropAnalysisFlow* f = new ConstantPropAnalysisFlow(in);
 	map<string, float> value;
 	Value *retVal = instruction;
@@ -197,7 +234,7 @@ float ConstantPropAnalysis::computeOp(float leftVal, float rightVal,
 
 ConstantPropAnalysisFlow* ConstantPropAnalysis::runPhiInst(
 		ConstantPropAnalysisFlow* in, Instruction* instruction) {
-
+     errs()<< "Hello *ConstantPropAnalysis::runPhiInst" << '\n';
 	ConstantPropAnalysisFlow* f = new ConstantPropAnalysisFlow(in);
 	Value *leftOp = instruction->getOperand(0);
 	Value *rightOp = instruction->getOperand(1);
@@ -234,7 +271,7 @@ ConstantPropAnalysisFlow* ConstantPropAnalysis::runPhiInst(
 ConstantPropAnalysisFlow* ConstantPropAnalysis::runFOpInst(
 		ConstantPropAnalysisFlow* in, Instruction* instruction,
 		unsigned opcode) {
-
+    errs()<< "Hello *ConstantPropAnalysis::runFOpInst" << '\n';
 	ConstantPropAnalysisFlow* f = new ConstantPropAnalysisFlow(in);
 	Value *leftOp = instruction->getOperand(0);
 	Value *rightOp = instruction->getOperand(1);
@@ -337,18 +374,19 @@ ConstantPropAnalysisFlow* ConstantPropAnalysis::runFOpInst(
 ConstantPropAnalysisFlow* ConstantPropAnalysis::runOpInst(
 		ConstantPropAnalysisFlow* in, Instruction* instruction,
 		unsigned opcode) {
-
+       errs()<< "Hello *ConstantPropAnalysis::runOpInst" << '\n';
 	ConstantPropAnalysisFlow* f = new ConstantPropAnalysisFlow(in);
 	Value *leftOp = instruction->getOperand(0);
 	Value *rightOp = instruction->getOperand(1);
 	map<string, float> value;
 	Value *K = instruction;
 	string regName = K->getName();
-
+    
 	if (ConstantInt *CILeft = dyn_cast<ConstantInt>(leftOp)) {
+		 errs()<< "*CILeft = dyn_cast<ConstantInt>(leftOp)" << '\n';
 
 		if (ConstantInt *CIRight = dyn_cast<ConstantInt>(rightOp)) {
-
+            errs()<< "*CIRight = dyn_cast<ConstantInt>(rightOp)" << '\n';
 			float leftVal = CILeft->getZExtValue();
 			float rightVal = CIRight->getZExtValue();
 
@@ -363,6 +401,7 @@ ConstantPropAnalysisFlow* ConstantPropAnalysis::runOpInst(
 			delete f;
 			f = tmp;
 		} else {
+			errs()<< "!*CIRight = dyn_cast<ConstantInt>(rightOp) " << '\n';
 			if (f->value.find(rightOp->getName())!= f->value.end()) {
 
 				float leftVal = CILeft->getZExtValue();
@@ -380,8 +419,9 @@ ConstantPropAnalysisFlow* ConstantPropAnalysis::runOpInst(
 			}
 		}
 	} else {
+		  errs()<< "!*CIRight = dyn_cast<ConstantInt>(lefttOp)" << '\n';
 		if (ConstantInt *CIRight = dyn_cast<ConstantInt>(rightOp)) {
-
+             
 			if (f->value.find(leftOp->getName()) != f->value.end()) {
 				float leftVal = f->value.find(leftOp->getName())->second;
 				float rightVal = CIRight->getZExtValue();

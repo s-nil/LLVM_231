@@ -10,10 +10,10 @@ using namespace llvm;
 using namespace std;
 
 namespace {
-  struct ConstantPropAnalysisOptimizationPass : public FunctionPass {
+  struct ConstantPropAnalysisPass : public FunctionPass {
     static char ID;
     vector<ConstantPropAnalysis *>constantPropAnalyses;
-    ConstantPropAnalysisOptimizationPass() : FunctionPass(ID) {}
+    ConstantPropAnalysisPass() : FunctionPass(ID) {}
 
     virtual bool runOnFunction(Function &F) {
     	constantPropAnalyses.push_back(new ConstantPropAnalysis(F));
@@ -25,13 +25,14 @@ namespace {
     	for (unsigned int i = 0 ; i < constantPropAnalyses.size() ; i++){
         	//Run worklist
         	constantPropAnalyses[i]->runWorklist();
-  
-        	OS << "FINISH WORKLIST : " << "\n";
+          
+          constantPropAnalyses[i]->print(OS);
+        	OS <<"\n";
     	}
 
   	}
   };
 }
 
-char ConstantPropAnalysisOptimizationPass::ID = 0;
-static RegisterPass<ConstantPropAnalysisOptimizationPass> X("ConstantPropAnalysisOptimization", "Constant Propagation Analysis Optimization Pass", false, false);
+char ConstantPropAnalysisPass::ID = 0;
+static RegisterPass<ConstantPropAnalysisPass> X("ConstantPropAnalysis", "Constant Propagation Analysis Pass", false, false);

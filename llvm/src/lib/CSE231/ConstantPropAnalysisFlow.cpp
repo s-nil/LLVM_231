@@ -1,7 +1,6 @@
 #include "ConstantPropAnalysisFlow.h"
 
-int Top = 2;
-int Bottom = 1;
+
 	
 ConstantPropAnalysisFlow::ConstantPropAnalysisFlow(): Flow(){}
 	
@@ -16,7 +15,7 @@ ConstantPropAnalysisFlow::~ConstantPropAnalysisFlow(){}
 bool ConstantPropAnalysisFlow::equals(Flow* otherSuper) {
 	ConstantPropAnalysisFlow* other =
 			static_cast<ConstantPropAnalysisFlow*>(otherSuper);
-	// if one of them is "bottom" or top	
+	// if one of them is "BOTTOM" or TOP	
 	if (this->triPoint || other->triPoint)
 		return this->triPoint == other->triPoint;
 	//compare the size	
@@ -43,31 +42,19 @@ string ConstantPropAnalysisFlow::arrowList() {
 	//Value has something inside
 	stringstream ss;
 	//ss<<"in arrowList";
-	map<string, set<string> >::const_iterator it = this->value.begin();
+	map<string, float >::const_iterator it = this->value.begin();
     string first = it->first;
 	float second =it->second;
-	if (its != it->second.end()) {
-        ss << first << "->"<< *its << "\n";
-        its++;
-	}
-	for (; its != it->second.end() ; its++) {
-        ss << first << "->"<< *its << "\n";
-	}
+	
+        ss << first << "->"<< second<< "\n";
+  
 	//errs() << "number of keys in set : " << it->second.size() << "\n";
  	if (it != this->value.end())
  		it++;
 	for (; it != this->value.end() ; it++) {
-		if (it->second.size()==0)
-			continue;
         string first = it->first;
-		its=it->second.begin();
-		if (its != it->second.end()) {
-            ss << first << "->"<< *its << "\n";
-			its++;
-		}
-		for (; its != it->second.end() ; its++) {
-            ss << first << "->"<< *its << "\n";
-		}
+		second = it->second;
+        ss << first << "->"<< second << "\n";
 	}
 	ss << "";
 	//ss<<"out arrowList";
@@ -75,25 +62,25 @@ string ConstantPropAnalysisFlow::arrowList() {
 }
 
 
-// Top is empty set   Bottom is full set
+// TOP is empty set   BOTTOM is full set
 Flow* ConstantPropAnalysisFlow::join(Flow* otherSuper) {
 
 	ConstantPropAnalysisFlow* other =
 			static_cast<ConstantPropAnalysisFlow*>(otherSuper);
 
-	if (this->triPoint == Top || other->triPoint == Top)
-		return new ConstantPropAnalysisFlow(Top);
+	if (this->triPoint == TOP || other->triPoint == TOP)
+		return new ConstantPropAnalysisFlow(TOP);
 
-	if (this->triPoint == Bottom && other->triPoint == Bottom)
-		return new ConstantPropAnalysisFlow(Bottom);
+	if (this->triPoint == BOTTOM && other->triPoint == BOTTOM)
+		return new ConstantPropAnalysisFlow(BOTTOM);
 
-	if (this->triPoint == Bottom) {
+	if (this->triPoint == BOTTOM) {
 		ConstantPropAnalysisFlow* f = new ConstantPropAnalysisFlow();
 		f->value = other->value;
 		f->triPoint = other->triPoint;
 		return f;
 	}
-	if (other->triPoint == Bottom) {
+	if (other->triPoint == BOTTOM) {
 		ConstantPropAnalysisFlow* f = new ConstantPropAnalysisFlow();
 		f->value = this->value;
 		f->triPoint = this->triPoint;
@@ -101,7 +88,7 @@ Flow* ConstantPropAnalysisFlow::join(Flow* otherSuper) {
 	}
 
 	ConstantPropAnalysisFlow* f = new ConstantPropAnalysisFlow();
-  // if the two set are both not bottom or top, join them
+  // if the two set are both not BOTTOM or TOP, join them
 	for (map<string, float>::iterator it = this->value.begin();
 			it != this->value.end(); it++) {
 

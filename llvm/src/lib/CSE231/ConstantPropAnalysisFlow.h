@@ -7,6 +7,7 @@
 #include <sstream>
 #include "llvm/Support/raw_ostream.h"
 #include "Flow.h"
+#include "Lattice.h"
 
 using namespace std;
 using namespace llvm;

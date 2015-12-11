@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-pass="ConstantPropAnalysis"
+pass="ConstantPropGuardian"
 
 bench_path=$1
 

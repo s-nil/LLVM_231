@@ -1,4 +1,11 @@
-#example run
+#run all P2 test in one line
+./P2runALL.sh
+
+
+
+
+
+#example run for guardian -> artisan -> miner
 #guardian
 ./runscripts/guardian/runPointer.sh ${CSE231ROOT}/P2test/optimizerSimple
 
@@ -7,5 +14,7 @@
 
 #miner
 ./runscripts/miner/dig.sh ${CSE231ROOT}/P2test/optimizerSimple
+
+
 
 

@@ -3,14 +3,12 @@
 int main()
 {
  int a = 5;
- int b = 100 + a;
+ int b = a + 50;
  int c = b * 50;
  int d = b / 25;
  int e = b % 25;
- int f = b - 100;
- int g = b >> 2;
- int h = b << 2;
- int i = b & a;
- int j = b | a;
+ int f = b - 50;
+ int g = b >> 1;
+ int h = b << 1;
  return a;
 }

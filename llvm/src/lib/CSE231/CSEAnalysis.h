@@ -19,7 +19,6 @@
 using namespace llvm;
 using namespace std;
 
-//Static Analysis class
 class CSEAnalysis: public WorkList {
 
 public:

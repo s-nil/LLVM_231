@@ -124,7 +124,7 @@ Flow* RangeAnalysis::executeFlowFunction(Flow *in, Instruction *inst, int NodeId
 			break;
 	}	
 	//errs() << inst->getOperand(0)->getName()<<"\n";
-	errs() << *inst << output->toString() << "\n";
+	//errs() << *inst << output->toString() << "\n";
 	return output;
 }
 
@@ -207,7 +207,7 @@ RAFlow* RangeAnalysis::runOpInst(RAFlow* in, Instruction* instruction, unsigned 
 	ConstantFP *leftF = dyn_cast<ConstantFP>(left);
 	ConstantFP *rightF = dyn_cast<ConstantFP>(right);
 
-	errs() << left->getName() << " " << right->getName() << "\n";
+	//errs() << left->getName() << " " << right->getName() << "\n";
 	// Deal with int operand
 	if (type == 0){
 		if (leftI) lRange = getConstRange(leftI, type);
@@ -284,7 +284,6 @@ RAFlow* RangeAnalysis::runOpInst(RAFlow* in, Instruction* instruction, unsigned 
 
 RAFlow* RangeAnalysis::runStoreInst(RAFlow* in, Instruction* instruction) {
 	RAFlow* f = new RAFlow(in);
-	Value *inst = instruction;
 
 	Range rtnRange;
 	Value* left = instruction->getOperand(0);
@@ -324,8 +323,6 @@ RAFlow* RangeAnalysis::runStoreInst(RAFlow* in, Instruction* instruction) {
 
 RAFlow* RangeAnalysis::runLoadInst(RAFlow* in, Instruction* instruction) {
 	RAFlow* f = new RAFlow(in);
-	Value *inst = instruction;
-
 	Range rtnRange;
 	Value* input = instruction->getOperand(0);
 
@@ -367,16 +364,15 @@ RAFlow* RangeAnalysis::runCompInst(RAFlow* in, Instruction* instruction) {
 	ConstantFP *leftF = dyn_cast<ConstantFP>(left);
 	ConstantFP *rightF = dyn_cast<ConstantFP>(right);
 
-	if (!leftI & !leftF & left->getName()=="" & f->value.find("tmp")!=f->value.end())
+	if ((!leftI) & (!leftF) & (left->getName()=="") & (f->value.find("tmp")!=f->value.end()))
 		f->value.erase("tmp");
-	if (!rightI & !rightF & right->getName()=="" & f->value.find("tmp")!=f->value.end())
+	if ((!rightI) & (!rightF) & (right->getName()=="") & (f->value.find("tmp")!=f->value.end()))
 		f->value.erase("tmp");	
 	return f;
 }
 
 RAFlow* RangeAnalysis::runRtnInst(RAFlow* in, Instruction* instruction) {
 	RAFlow* f = new RAFlow(in);
-	Value *inst = instruction;
 
 	Range rtnRange;
 	Value* input = instruction->getOperand(0);
@@ -407,7 +403,6 @@ RAFlow* RangeAnalysis::runRtnInst(RAFlow* in, Instruction* instruction) {
 
 RAFlow* RangeAnalysis::runCastInst(RAFlow* in, Instruction* instruction) {
 	RAFlow* f = new RAFlow(in);
-	Value *inst = instruction;
 
 	Range rtnRange;
 	Value* input = instruction->getOperand(0);

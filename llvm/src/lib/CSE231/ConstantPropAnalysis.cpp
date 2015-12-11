@@ -420,6 +420,41 @@ ConstantPropAnalysisFlow* ConstantPropAnalysis::runOpInst(
 	return f;
 }
 
+void ConstantPropAnalysis::print(raw_ostream &OS) {
+
+    for (unsigned int i = 0; i < CFGNodes.size() ; i++) {
+        this->printHelper(OS,this->CFGNodes[i]);
+        if(i+1 < CFGNodes.size()) {
+            OS << "\n";
+        }
+            OS << "\n";
+    }
+}
+
+
+void ConstantPropAnalysis::printHelper(raw_ostream &OS, LatticeNode* node) {
+    
+	OS << "representation : " << *(node->inst) << "\n";
+	OS << "#Edge incoming" << "\n";
+    for (unsigned int i = 0 ; i < node->incoming.size() ; i++) {
+ 
+		ConstantPropAnalysisFlow * temp = (ConstantPropAnalysisFlow * )node->incoming[i]->flow;
+		OS << temp->arrowList() << "\n";
+
+    }
+	OS << "\n";
+	
+ 	OS << "#Edge outcoming" << "\n";
+    for (unsigned int i = 0 ; i < node->outgoing.size() ; i++) {
+
+		ConstantPropAnalysisFlow * temp = (ConstantPropAnalysisFlow * )node->outgoing[i]->flow;
+		OS<<temp->arrowList()<<"\n";
+ 
+    }
+
+}
+
+
 
 
 

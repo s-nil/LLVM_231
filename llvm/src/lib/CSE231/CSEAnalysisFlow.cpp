@@ -1,7 +1,7 @@
 #include "CSEAnalysisFlow.h"
 
 #define TOP 2
-#define BOTTOM 3
+#define BOTTOM 1
 
 CSEAnalysisFlow::CSEAnalysisFlow() :
 		Flow() {}

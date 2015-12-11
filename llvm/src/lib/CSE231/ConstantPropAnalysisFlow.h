@@ -1,5 +1,5 @@
-#ifndef CONSTANT_PROP_ANALYSIS_FLOW_H_
-#define CONSTANT_PROP_ANALYSIS_FLOW_H_
+#ifndef CONSTANT_PROP_ANALYSIS_FLOW
+#define CONSTANT_PROP_ANALYSIS_FLOW
 #include <string>
 #include <map>
 #include <set>

@@ -2,26 +2,26 @@ Printing analysis 'Available Expression Analysis Guardian Pass' for function '__
 Available Expression AnalysisS: 
 representation :   call void @_ZNSt8ios_base4InitC1Ev(%"class.std::ios_base::Init"* @_ZStL8__ioinit)
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %0 = call i32 @__cxa_atexit(void (i8*)* bitcast (void (%"class.std::ios_base::Init"*)* @_ZNSt8ios_base4InitD1Ev to void (i8*)*), i8* getelementptr inbounds (%"class.std::ios_base::Init"* @_ZStL8__ioinit, i32 0, i32 0), i8* @__dso_handle) #1
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   ret void
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation : 
@@ -31,37 +31,37 @@ entry:
   ret void
 
 #Edge incoming
-TOP
-TOP
+BOTTOM
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 Printing analysis 'Available Expression Analysis Guardian Pass' for function 'main':
 Available Expression AnalysisS: 
 representation :   call void @_ZNSt8ios_base4InitC1Ev(%"class.std::ios_base::Init"* @_ZStL8__ioinit)
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %0 = call i32 @__cxa_atexit(void (i8*)* bitcast (void (%"class.std::ios_base::Init"*)* @_ZNSt8ios_base4InitD1Ev to void (i8*)*), i8* getelementptr inbounds (%"class.std::ios_base::Init"* @_ZStL8__ioinit, i32 0, i32 0), i8* @__dso_handle) #1
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   ret void
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation : 
@@ -71,193 +71,193 @@ entry:
   ret void
 
 #Edge incoming
-TOP
-TOP
+BOTTOM
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %retval = alloca i32, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %a = alloca float, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %b = alloca float, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %c = alloca i32, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %d = alloca i32, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %e = alloca i32, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %g = alloca i32, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %f = alloca i32, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %h = alloca i32, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %short1 = alloca i16, align 2
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %short2 = alloca i16, align 2
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %ff = alloca i32, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   store i32 0, i32* %retval
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   store float 0x4015333340000000, float* %a, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   store float 0x402E9999A0000000, float* %b, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   store i32 10, i32* %g, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %0 = load float* %a, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %cmp = fcmp oeq float %0, 6.000000e+00
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   br i1 %cmp, label %if.then, label %if.else
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
-TOP
+BOTTOM
+BOTTOM
 
 
 representation :   %1 = load float* %a, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %4 = load float* %a, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %5 = load float* %b, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %add2 = fadd float %4, %5
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
 %add2->fadd %, %
@@ -843,15 +843,15 @@ if.end:                                           ; preds = %if.else, %if.then
 
 representation :   %2 = load float* %b, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %add = fadd float %1, %2
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
 %add->fadd %, %
@@ -942,26 +942,26 @@ Printing analysis 'Available Expression Analysis Guardian Pass' for function '_G
 Available Expression AnalysisS: 
 representation :   call void @_ZNSt8ios_base4InitC1Ev(%"class.std::ios_base::Init"* @_ZStL8__ioinit)
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %0 = call i32 @__cxa_atexit(void (i8*)* bitcast (void (%"class.std::ios_base::Init"*)* @_ZNSt8ios_base4InitD1Ev to void (i8*)*), i8* getelementptr inbounds (%"class.std::ios_base::Init"* @_ZStL8__ioinit, i32 0, i32 0), i8* @__dso_handle) #1
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   ret void
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation : 
@@ -971,193 +971,193 @@ entry:
   ret void
 
 #Edge incoming
-TOP
-TOP
+BOTTOM
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %retval = alloca i32, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %a = alloca float, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %b = alloca float, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %c = alloca i32, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %d = alloca i32, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %e = alloca i32, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %g = alloca i32, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %f = alloca i32, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %h = alloca i32, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %short1 = alloca i16, align 2
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %short2 = alloca i16, align 2
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %ff = alloca i32, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   store i32 0, i32* %retval
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   store float 0x4015333340000000, float* %a, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   store float 0x402E9999A0000000, float* %b, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   store i32 10, i32* %g, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %0 = load float* %a, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %cmp = fcmp oeq float %0, 6.000000e+00
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   br i1 %cmp, label %if.then, label %if.else
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
-TOP
+BOTTOM
+BOTTOM
 
 
 representation :   %1 = load float* %a, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %4 = load float* %a, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %5 = load float* %b, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %add2 = fadd float %4, %5
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
 %add2->fadd %, %
@@ -1743,15 +1743,15 @@ if.end:                                           ; preds = %if.else, %if.then
 
 representation :   %2 = load float* %b, align 4
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   %add = fadd float %1, %2
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
 %add->fadd %, %
@@ -1840,18 +1840,18 @@ representation :   br label %if.end
 
 representation :   call void @__cxx_global_var_init()
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation :   ret void
 #Edge incoming
-TOP
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 
 representation : 
@@ -1860,10 +1860,10 @@ entry:
   ret void
 
 #Edge incoming
-TOP
-TOP
+BOTTOM
+BOTTOM
 
 #Edge outcoming
-TOP
+BOTTOM
 
 

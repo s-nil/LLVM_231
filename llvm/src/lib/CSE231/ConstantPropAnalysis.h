@@ -35,39 +35,7 @@ public :
 	
 	void printHelper(raw_ostream &OS, LatticeNode* node);
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
-protected:
 	ConstantPropAnalysisFlow *runCastInst(ConstantPropAnalysisFlow* in, Instruction* inst);
 
 	ConstantPropAnalysisFlow *returnTop();
@@ -77,7 +45,7 @@ protected:
 	ConstantPropAnalysisFlow *runPhiInst(ConstantPropAnalysisFlow* in, Instruction* inst);
 
 
-public:
+
 	float computeOp(float leftVal, float rightVal, unsigned opcode);
 
 

@@ -1,5 +1,5 @@
-#ifndef AVAILABLE_EXPRESSION_ANALYSIS
-#define AVAILABLE_EXPRESSION_ANALYSIS
+#ifndef CSE_ANALYSIS
+#define CSE_ANALYSIS
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/Instruction.h"

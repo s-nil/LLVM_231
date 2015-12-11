@@ -1,0 +1,268 @@
+Printing analysis 'PointerGuardian Pass' for function 'main':
+"Function Name" : "main
+representation :   %retval = alloca i32, align 4
+#Edge incoming
+BOTTOM
+
+#Edge outcoming
+BOTTOM
+
+
+representation :   %a = alloca i32, align 4
+#Edge incoming
+BOTTOM
+
+#Edge outcoming
+BOTTOM
+
+
+representation :   %x1 = alloca i32*, align 8
+#Edge incoming
+BOTTOM
+
+#Edge outcoming
+BOTTOM
+
+
+representation :   %x2 = alloca i32*, align 8
+#Edge incoming
+BOTTOM
+
+#Edge outcoming
+BOTTOM
+
+
+representation :   %x3 = alloca i32*, align 8
+#Edge incoming
+BOTTOM
+
+#Edge outcoming
+BOTTOM
+
+
+representation :   %b = alloca i32, align 4
+#Edge incoming
+BOTTOM
+
+#Edge outcoming
+BOTTOM
+
+
+representation :   %y1 = alloca i32*, align 8
+#Edge incoming
+BOTTOM
+
+#Edge outcoming
+BOTTOM
+
+
+representation :   %y2 = alloca i32*, align 8
+#Edge incoming
+BOTTOM
+
+#Edge outcoming
+BOTTOM
+
+
+representation :   %c = alloca i32, align 4
+#Edge incoming
+BOTTOM
+
+#Edge outcoming
+BOTTOM
+
+
+representation :   %z = alloca i32*, align 8
+#Edge incoming
+BOTTOM
+
+#Edge outcoming
+BOTTOM
+
+
+representation :   store i32 0, i32* %retval
+#Edge incoming
+BOTTOM
+
+#Edge outcoming
+BOTTOM
+
+
+representation :   store i32 5, i32* %a, align 4
+#Edge incoming
+BOTTOM
+
+#Edge outcoming
+BOTTOM
+
+
+representation :   store i32 10, i32* %b, align 4
+#Edge incoming
+BOTTOM
+
+#Edge outcoming
+BOTTOM
+
+
+representation :   store i32 20, i32* %c, align 4
+#Edge incoming
+BOTTOM
+
+#Edge outcoming
+BOTTOM
+
+
+representation :   store i32* %a, i32** %x1, align 8
+#Edge incoming
+BOTTOM
+
+#Edge outcoming
+x1->a
+
+
+
+representation :   store i32* %a, i32** %x2, align 8
+#Edge incoming
+x1->a
+
+
+#Edge outcoming
+x1->a
+x2->a
+
+
+
+representation :   store i32* %a, i32** %x3, align 8
+#Edge incoming
+x1->a
+x2->a
+
+
+#Edge outcoming
+x1->a
+x2->a
+x3->a
+
+
+
+representation :   store i32* %b, i32** %y1, align 8
+#Edge incoming
+x1->a
+x2->a
+x3->a
+
+
+#Edge outcoming
+x1->a
+x2->a
+x3->a
+y1->b
+
+
+
+representation :   store i32* %b, i32** %y2, align 8
+#Edge incoming
+x1->a
+x2->a
+x3->a
+y1->b
+
+
+#Edge outcoming
+x1->a
+x2->a
+x3->a
+y1->b
+y2->b
+
+
+
+representation :   store i32* %c, i32** %z, align 8
+#Edge incoming
+x1->a
+x2->a
+x3->a
+y1->b
+y2->b
+
+
+#Edge outcoming
+x1->a
+x2->a
+x3->a
+y1->b
+y2->b
+z->c
+
+
+
+representation :   ret i32 0
+#Edge incoming
+x1->a
+x2->a
+x3->a
+y1->b
+y2->b
+z->c
+
+
+#Edge outcoming
+x1->a
+x2->a
+x3->a
+y1->b
+y2->b
+z->c
+
+
+
+representation : 
+entry:
+  %retval = alloca i32, align 4
+  %a = alloca i32, align 4
+  %x1 = alloca i32*, align 8
+  %x2 = alloca i32*, align 8
+  %x3 = alloca i32*, align 8
+  %b = alloca i32, align 4
+  %y1 = alloca i32*, align 8
+  %y2 = alloca i32*, align 8
+  %c = alloca i32, align 4
+  %z = alloca i32*, align 8
+  store i32 0, i32* %retval
+  store i32 5, i32* %a, align 4
+  store i32 10, i32* %b, align 4
+  store i32 20, i32* %c, align 4
+  store i32* %a, i32** %x1, align 8
+  store i32* %a, i32** %x2, align 8
+  store i32* %a, i32** %x3, align 8
+  store i32* %b, i32** %y1, align 8
+  store i32* %b, i32** %y2, align 8
+  store i32* %c, i32** %z, align 8
+  ret i32 0
+
+#Edge incoming
+x1->a
+x2->a
+x3->a
+y1->b
+y2->b
+z->c
+
+x1->a
+x2->a
+x3->a
+y1->b
+y2->b
+z->c
+
+
+#Edge outcoming
+x1->a
+x2->a
+x3->a
+y1->b
+y2->b
+z->c
+
+
+

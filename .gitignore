@@ -12,4 +12,5 @@
 !/P2test/
 *.swp
 !/P2
+!/logs
 *~

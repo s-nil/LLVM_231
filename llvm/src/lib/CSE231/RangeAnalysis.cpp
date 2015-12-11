@@ -82,10 +82,9 @@ Flow* RangeAnalysis::executeFlowFunction(Flow *in, Instruction *inst, int NodeId
 		case Instruction::SDiv:
 		case Instruction::SRem:
 		case Instruction::Shl:
-		case Instruction::LShr:
+		case Instruction::AShr:
 			output = runOpInst(inFlow, inst, inst->getOpcode(), 0);
 			break;
-		case Instruction::AShr:
 		case Instruction::FAdd:
 		case Instruction::FSub:
 		case Instruction::FMul:
@@ -556,7 +555,7 @@ Range RangeAnalysis::getRange(Range lRange, Range rRange, unsigned opcode){
 				if (tmp[i]>rtnRange.upper) rtnRange.upper = tmp[i];
 			}
 			break;
-		case Instruction::LShr:
+		case Instruction::AShr:
 			tmp[0] = (int) lRange.lower >> (int) rRange.lower;
 			tmp[1] = (int) lRange.lower >> (int) rRange.upper;
 			tmp[2] = (int) lRange.upper >> (int) rRange.lower;

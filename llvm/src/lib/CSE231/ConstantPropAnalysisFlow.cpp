@@ -37,6 +37,44 @@ bool ConstantPropAnalysisFlow::equals(Flow* otherSuper) {
 	return true;
 }
 
+string ConstantPropAnalysisFlow::arrowList() {
+	if (value.size()==0)
+		return std::string ( ( this->triPoint ==BOTTOM ? "BOTTOM" : "TOP"));
+	//Value has something inside
+	stringstream ss;
+	//ss<<"in arrowList";
+	map<string, set<string> >::const_iterator it = this->value.begin();
+    string first = it->first;
+	float second = it->second;
+	if (its != it->second.end()) {
+        ss << first << "->"<< *its << "\n";
+        its++;
+	}
+	for (; its != it->second.end() ; its++) {
+        ss << first << "->"<< *its << "\n";
+	}
+	//errs() << "number of keys in set : " << it->second.size() << "\n";
+ 	if (it != this->value.end())
+ 		it++;
+	for (; it != this->value.end() ; it++) {
+		if (it->second.size()==0)
+			continue;
+        string first = it->first;
+		its=it->second.begin();
+		if (its != it->second.end()) {
+            ss << first << "->"<< *its << "\n";
+			its++;
+		}
+		for (; its != it->second.end() ; its++) {
+            ss << first << "->"<< *its << "\n";
+		}
+	}
+	ss << "";
+	//ss<<"out arrowList";
+	return ss.str();
+}
+
+
 // Top is empty set   Bottom is full set
 Flow* ConstantPropAnalysisFlow::join(Flow* otherSuper) {
 

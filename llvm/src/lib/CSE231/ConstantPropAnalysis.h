@@ -8,7 +8,7 @@
 #include "llvm/Support/raw_ostream.h"
 #include "ConstantPropAnalysisFlow.h"
 #include "WorkList.h"
-#include "llvm/upport/"
+#include "llvm/Support/raw_ostream.h"
 #include <map>
 #include <vector>
 #include <cstdlib>
@@ -30,12 +30,47 @@ public :
 	Flow* executeFlowFunction(Flow *in, Instruction *inst, int NodeId);
 
 	Flow* initialize();
+	
+	void print(raw_ostream &OS);
+	
+	void printHelper(raw_ostream &OS, LatticeNode* node);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 protected:
 	ConstantPropAnalysisFlow *runCastInst(ConstantPropAnalysisFlow* in, Instruction* inst);
 
 	ConstantPropAnalysisFlow *returnTop();
-
 
 	ConstantPropAnalysisFlow *runFOpInst(ConstantPropAnalysisFlow* in, Instruction* inst, unsigned opcode);
 	ConstantPropAnalysisFlow *runOpInst(ConstantPropAnalysisFlow* in, Instruction* inst, unsigned opcode);

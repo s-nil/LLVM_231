@@ -20,6 +20,8 @@ class ConstantPropAnalysisFlow: public Flow {
 public:
   
 	map<string, float > value;
+	
+    string arrowList();
 
 	//constructor 
 	ConstantPropAnalysisFlow();

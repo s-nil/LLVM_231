@@ -1,0 +1,231 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>LLVM  231 optimization -- course project by salamanderrex</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>LLVM  231 optimization -- course project</h1>
+        <p>CSE231 FA15</p>
+
+        <p class="view"><a href="https://github.com/salamanderrex/LLVM_231">View the Project on GitHub <small>salamanderrex/LLVM_231</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/salamanderrex/LLVM_231/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/salamanderrex/LLVM_231/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/salamanderrex/LLVM_231">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="llvm_231" class="anchor" href="#llvm_231" aria-hidden="true"><span class="octicon octicon-link"></span></a>LLVM_231</h1>
+
+<p><img src="https://img.shields.io/badge/build-pass-green.svg" alt="Build status"> 
+<img src="https://img.shields.io/badge/progress-All%20Done-green.svg" alt="progress">
+<img src="https://img.shields.io/badge/emotion-Happy-red.svg" alt="Emotion"></p>
+
+<p>LLVM project for CSE 231Fall15</p>
+
+<h1>
+<a id="project-2" class="anchor" href="#project-2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project 2</h1>
+
+<p>Project 2 has 4 parts.</p>
+
+<table>
+<thead>
+<tr>
+<th>Analysis</th>
+<th>Use of Analysis Results</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Constant Propagation</td>
+<td>Optimization: Constant Folding, Branch Folding</td>
+</tr>
+<tr>
+<td>Available Expressions</td>
+<td>Optimization: Common Sub-expression Elminiation</td>
+</tr>
+<tr>
+<td>Range Analysis</td>
+<td>Bug finder: Warn programmer if can't show array access in bounds</td>
+</tr>
+<tr>
+<td>Intra-Procedural Pointer Analysis</td>
+<td>Catalyst: Improve all other analyses using this information</td>
+</tr>
+</tbody>
+</table>
+
+<p>For this part, we modulaize three sections for implementation of this project. They are:</p>
+
+<ul>
+<li>Guardian</li>
+<li>Artisan</li>
+<li>Miner</li>
+</ul>
+
+<h2>
+<a id="work-flow" class="anchor" href="#work-flow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Work Flow:</h2>
+
+<p><img src="https://cloud.githubusercontent.com/assets/6581499/11835593/a04011a4-a389-11e5-9779-f75b22db2fe4.png" alt="flow"></p>
+
+<ul>
+<li>### Guardian
+Guardian is the analysis for the program. For example, for pointer analysis, it will run Anderson al- gorithm based on IR of code.</li>
+<li>
+<h3>
+<a id="artisan" class="anchor" href="#artisan" aria-hidden="true"><span class="octicon octicon-link"></span></a>Artisan</h3>
+
+<p>Artisan is a wrapper for Guardian result. It will display in text or graphic representation. For example, in pointer analysis, it gives the the graphic represen- tation of the pointer relation with arrows.
+For example, for pointer analysis, it gives a intutive graph represtation of pointer analysis.
+<img src="https://cloud.githubusercontent.com/assets/6581499/11835714/625193ee-a38a-11e5-98c4-b8d0876b5638.png" alt="artisan for pointer"></p>
+</li>
+<li>
+<h3>
+<a id="miner" class="anchor" href="#miner" aria-hidden="true"><span class="octicon octicon-link"></span></a>Miner</h3>
+
+<p>Mineristheoptimizer.AccordingtotheGuardian's result, it does the optimization on the source file and output optimized file.
+<img src="https://cloud.githubusercontent.com/assets/6581499/11835760/a576f31c-a38a-11e5-99dc-aa6be1aff961.png" alt="Miner work resuilt"></p>
+</li>
+</ul>
+
+<h2>
+<a id="lattice-structure" class="anchor" href="#lattice-structure" aria-hidden="true"><span class="octicon octicon-link"></span></a>Lattice Structure</h2>
+
+<ul>
+<li>LatticeNode: 
+
+<ul>
+<li>the node in the lattic</li>
+</ul>
+</li>
+<li>LatticeEdge: 
+
+<ul>
+<li>the edge connecting each node</li>
+</ul>
+</li>
+<li>Flow: 
+
+<ul>
+<li>the information stored in each edge</li>
+</ul>
+</li>
+</ul>
+
+<p><img src="https://cloud.githubusercontent.com/assets/6581499/11835806/f2dbd7da-a38a-11e5-826d-85c840394cd7.png" alt="Lattice Structure"></p>
+
+<h2>
+<a id="run-the" class="anchor" href="#run-the" aria-hidden="true"><span class="octicon octicon-link"></span></a>Run the</h2>
+
+<h3>
+<a id="environment" class="anchor" href="#environment" aria-hidden="true"><span class="octicon octicon-link"></span></a>environment</h3>
+
+<pre><code>source startenv.sh
+
+#install artisan library
+apt-get install python-gtk2 graphviz
+sudo pip install xdot
+</code></pre>
+
+<h3>
+<a id="run-script" class="anchor" href="#run-script" aria-hidden="true"><span class="octicon octicon-link"></span></a>run script</h3>
+
+<p>To save your life, we prepare the runscript for you to test the test case in <code>P2</code>.</p>
+
+<pre><code>/runscript/P2runAll.sh
+</code></pre>
+
+<p>An simple example to run the Guardian -&gt; Artisan -&gt; Miner</p>
+
+<pre><code>#guardian
+./runscripts/guardian/runPointer.sh ${CSE231ROOT}/P2test/optimizerSimple
+
+#artisan
+./runscripts/artisan/draw.sh ${CSE231ROOT}/P2test/optimizerSimple
+
+#miner
+./runscripts/miner/dig.sh ${CSE231ROOT}/P2test/optimizerSimple
+
+</code></pre>
+
+<h1>
+<a id="project-1" class="anchor" href="#project-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project 1</h1>
+
+<p>There are three parts in Paroject 1</p>
+
+<ul>
+<li>Part 1: Collecting Static Instruction Counts</li>
+<li>Part 2: Collecting Dynamic Instruction Counts</li>
+<li>Part 3: Profiling Branch Bias</li>
+</ul>
+
+<h2>
+<a id="source-file-are-at" class="anchor" href="#source-file-are-at" aria-hidden="true"><span class="octicon octicon-link"></span></a>source file are at</h2>
+
+<ul>
+<li>passes:</li>
+</ul>
+
+<pre><code>/llvm/src/lib/CSE231
+</code></pre>
+
+<ul>
+<li>helper function</li>
+</ul>
+
+<pre><code>/extra/instrument
+</code></pre>
+
+<p>*benchmark</p>
+
+<pre><code>/extra/benchmarks/
+
+## start environment
+</code></pre>
+
+<p>source startenv.sh</p>
+
+<pre><code>
+## complie library
+</code></pre>
+
+<p>make llvm</p>
+
+<pre><code>It compiles the code of project into CSE231.so
+
+## run script
+we prepare the runscript for you.
+If you want to run section `x`
+</code></pre>
+
+<p>/runscripts/run-sectionx.sh</p>
+
+<pre><code>
+result will be in the `logs`.
+
+
+</code></pre>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/salamanderrex">salamanderrex</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
